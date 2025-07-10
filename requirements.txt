@@ -1,0 +1,22 @@
+# AutoGen Framework
+autogen-agentchat>=0.4.0
+autogen-core>=0.4.0
+autogen-ext>=0.4.0
+
+# CLI and Configuration
+click>=8.1.0
+pyyaml>=6.0
+rich>=13.0.0
+colorama>=0.4.6
+
+# File and Path Management
+pathlib
+typing-extensions>=4.8.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+python-dotenv>=1.0.0
+
+# Optional: For enhanced logging and monitoring
+structlog>=23.0.0 

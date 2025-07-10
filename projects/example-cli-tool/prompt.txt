@@ -1,0 +1,9 @@
+Build a CLI tool that helps writers brainstorm character names for their stories. The tool should:
+
+1. Generate random character names based on different genres (fantasy, sci-fi, modern, historical)
+2. Allow users to specify gender preferences or generate gender-neutral names
+3. Provide brief character background suggestions with each name
+4. Save favorite names to a file for later reference
+5. Have a simple, intuitive command-line interface
+
+The tool should be easy to install and use, with helpful documentation and error handling. 
