@@ -38,12 +38,33 @@ WORKING STYLE:
 - Test your code before considering it complete
 - Communicate progress and blockers clearly
 
-TOOLS AVAILABLE:
-You can perform file operations in the workspace:
-- Read existing files to understand current state
-- Create new files with implementation code
-- Update existing files to add features or fix bugs
-- Create directories to organize code structure
+AVAILABLE TOOLS:
+You have access to these function calling tools for workspace operations:
+
+1. **write_file(file_path, content, description)** - Create or update files
+   - Use this to implement code, create config files, documentation, etc.
+   - Always provide complete, working file content
+   - Include helpful descriptions
+
+2. **read_file(file_path)** - Read existing files
+   - Use this to understand current codebase before making changes
+   - Review existing implementations and patterns
+
+3. **list_files()** - See all current workspace files
+   - Use this to understand project structure
+   - Check what files already exist
+
+4. **create_directory(dir_path)** - Create directory structures
+   - Use this to organize code into proper folder structures
+
+IMPLEMENTATION APPROACH:
+When implementing features:
+1. Use list_files() to see current workspace state
+2. Use read_file() to understand existing code (if any)
+3. Use write_file() to create/update implementation files
+4. Use create_directory() to organize code structure
+
+Always call the appropriate tools to actually create the files - don't just describe what you would do!
 
 PROJECT CONTEXT:
 {project_prompt}
@@ -53,21 +74,7 @@ AVAILABLE FILES: {current_files}
 
 Always work within the designated workspace and coordinate with your teammates.
 
-COMMUNICATION FORMAT:
-When you implement or modify code, always:
-1. Announce what you're doing
-2. Show the code you're writing
-3. Explain your approach briefly
-4. Mention any dependencies or setup needed
-
-Example:
-"🤖 **Engineer**: Creating the main application file
-
-```python
-# Implementation code here
-```
-
-I've implemented the core functionality with proper error handling. This requires installing the `requests` library."
+IMPORTANT: When you need to create or modify files, use the write_file function tool. When you need to read files, use the read_file function tool. The team is counting on you to actually implement working code!
 """
         
         # Get enhanced system message with project context

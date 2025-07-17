@@ -15,6 +15,8 @@ from autogen_core import CancellationToken
 from .agents import create_agent
 from .config import AutoSquadConfig, SquadProfile
 from .project_manager import ProjectManager
+from .token_optimization import TokenOptimizer
+from .progress_display import LiveProgressDisplay, create_progress_callback
 
 
 class SquadOrchestrator:
@@ -26,13 +28,15 @@ class SquadOrchestrator:
         config: AutoSquadConfig,
         squad_profile: SquadProfile,
         model: str,
-        verbose: bool = False
+        verbose: bool = False,
+        show_live_progress: bool = True
     ):
         self.project_manager = project_manager
         self.config = config
         self.squad_profile = squad_profile
         self.model = model
         self.verbose = verbose
+        self.show_live_progress = show_live_progress
         
         # Initialize agents
         self.agents = []
@@ -41,6 +45,20 @@ class SquadOrchestrator:
         
         # Initialize model client
         self.model_client = self._create_model_client()
+        
+        # Initialize token optimization
+        self.token_optimizer = TokenOptimizer(
+            model=model,
+            max_context_tokens=config.llm_config.get("max_tokens", 6000)
+        )
+        
+        # Initialize progress display
+        if show_live_progress:
+            self.progress_display = LiveProgressDisplay()
+            self.progress_callbacks = create_progress_callback(self.progress_display)
+        else:
+            self.progress_display = None
+            self.progress_callbacks = {}
     
     def _create_model_client(self):
         """Create the model client for agents."""
@@ -70,6 +88,10 @@ class SquadOrchestrator:
             
             self.agents.append(agent)
             
+            # Register agent with progress display
+            if self.progress_display:
+                self.progress_display.register_agent(agent.name, agent_type)
+            
             if self.verbose:
                 print(f"Created {agent_type} agent: {agent.name}")
     
@@ -91,6 +113,10 @@ class SquadOrchestrator:
         if not self.group_chat:
             await self._create_group_chat()
         
+        # Update progress display
+        if self.progress_display:
+            self.progress_display.update_round_info(round_num, self.squad_profile.max_rounds or 5)
+        
         # Get project context for the round
         project_context = self.project_manager.get_project_context()
         workspace_summary = self.project_manager.get_workspace_summary()
@@ -104,6 +130,29 @@ class SquadOrchestrator:
         
         if self.verbose:
             print(f"Starting round {round_num} with prompt: {round_prompt[:100]}...")
+        
+        # Start progress tracking for this round
+        if self.progress_display:
+            self.progress_display.agent_started_action("System", f"Starting Round {round_num}")
+        
+        # Optimize conversation context before sending
+        if self.conversation_history:
+            optimized_history, optimization_stats = self.token_optimizer.optimize_conversation_context(
+                self.conversation_history,
+                system_message=round_prompt
+            )
+            
+            if self.verbose and optimization_stats["removed_messages"] > 0:
+                print(f"Token optimization: Removed {optimization_stats['removed_messages']} messages, "
+                      f"saved {optimization_stats['tokens_saved']} tokens "
+                      f"({optimization_stats['compression_ratio']:.1%} efficiency)")
+                      
+            # Update token usage display
+            if self.progress_display:
+                self.progress_display.update_token_usage(
+                    self.token_optimizer.total_tokens_used,
+                    self.token_optimizer.get_usage_summary()["estimated_cost_usd"]
+                )
         
         # Run the conversation with retry logic for transient errors
         max_retries = 3
@@ -130,6 +179,10 @@ class SquadOrchestrator:
                 if reflect and round_num % self.squad_profile.reflection_frequency == 0:
                     await self._run_reflection(round_num)
                 
+                # Update progress display
+                if self.progress_display:
+                    self.progress_display.agent_completed_action("System", f"Round {round_num} completed")
+                
                 # If we get here, the round succeeded
                 if attempt > 0 and self.verbose:
                     print(f"✅ Round {round_num} succeeded on attempt {attempt + 1}")
@@ -152,14 +205,12 @@ class SquadOrchestrator:
                 
                 # Don't retry quota errors or if this is the last attempt
                 if is_quota_error or attempt >= max_retries:
-                    # Extract specific error details
-                    error_msg = "OpenAI API rate limit exceeded"
+                    # Create a more helpful error message
                     if is_quota_error:
                         error_msg = "OpenAI API quota exceeded - Please add credits to your account"
-                    elif attempt >= max_retries:
+                    else:
                         error_msg = f"OpenAI API rate limit exceeded - Failed after {max_retries + 1} attempts"
                     
-                    # Create a more helpful error message
                     friendly_error = f"""
 🚫 {error_msg}
 
@@ -174,29 +225,7 @@ Original error: {str(e)}
                     
                     raise RuntimeError(friendly_error) from e
                 
-                # Continue to next retry attempt
-                continue
-            
-            except openai.APIError as e:
-                if self.verbose:
-                    print(f"⚠️ OpenAI API error in round {round_num} (attempt {attempt + 1}): {e}")
-                
-                # Don't retry API errors on the last attempt
-                if attempt >= max_retries:
-                    friendly_error = f"""
-🚫 OpenAI API Error
-
-💡 This might be a temporary issue. Please try:
-   • Waiting a few minutes and retrying
-   • Checking OpenAI status: https://status.openai.com/
-   • Verifying your API key is valid
-
-Original error: {str(e)}
-"""
-                    
-                    raise RuntimeError(friendly_error) from e
-                
-                # Continue to next retry attempt for transient API errors
+                # Continue to next retry attempt for retryable rate limits
                 continue
             
             except RuntimeError as e:
@@ -253,62 +282,60 @@ Original error: {error_str}
                         
                         raise RuntimeError(friendly_error) from e
                     
-                    # Continue to next retry attempt for transient API errors
+                    # Continue to next retry attempt
                     continue
                 
-                else:
-                    # Not an OpenAI error, re-raise immediately
-                    if self.verbose:
-                        print(f"Error in round {round_num}: {e}")
-                    raise
+                # Re-raise non-OpenAI errors immediately
+                raise
             
             except Exception as e:
+                # Handle other unexpected errors
                 if self.verbose:
-                    print(f"Error in round {round_num}: {e}")
-                raise
+                    print(f"⚠️ Unexpected error in round {round_num} (attempt {attempt + 1}): {e}")
+                
+                # Don't retry unexpected errors on the last attempt
+                if attempt >= max_retries:
+                    raise
+                
+                # Continue to next retry attempt for other errors
+                continue
     
-    def _create_round_prompt(
-        self, 
-        round_num: int, 
-        project_context: Dict[str, Any], 
-        workspace_summary: str
-    ) -> str:
+    def _create_round_prompt(self, round_num: int, project_context: Dict[str, Any], workspace_summary: str) -> str:
         """Create the prompt for a development round."""
-        
-        if round_num == 1:
-            # First round - start from the project prompt
-            prompt = f"""
-🚀 DEVELOPMENT ROUND {round_num}
+        base_prompt = f"""
+🚀 AutoSquad Development Round {round_num}
 
-PROJECT PROMPT:
-{project_context['prompt']}
+PROJECT OBJECTIVE:
+{project_context.get('prompt', 'No prompt specified')}
 
-WORKSPACE STATUS:
+CURRENT WORKSPACE STATE:
 {workspace_summary}
 
-TEAM OBJECTIVE:
-This is the first development round. The PM should start by analyzing the requirements and breaking them down into actionable tasks. The Engineer should begin implementing core functionality. The Architect should provide guidance on structure and design patterns.
+ROUND INSTRUCTIONS:
+This is round {round_num} of the development process. Each agent should:
 
-Each agent should contribute according to their role and coordinate with the team.
-"""
-        else:
-            # Subsequent rounds - continue development
-            prompt = f"""
-🔄 DEVELOPMENT ROUND {round_num}
+1. **PM**: Review progress and guide next priorities
+2. **Engineer**: Implement features and write code  
+3. **Architect**: Review structure and suggest improvements
+4. **QA**: Test functionality and identify issues
 
-PROJECT PROMPT:
-{project_context['prompt']}
+COLLABORATION GUIDELINES:
+- Build upon previous work done in earlier rounds
+- Coordinate to avoid conflicts and duplicate work
+- Use function calls to actually modify workspace files
+- Communicate clearly about what you're working on
+- Focus on making measurable progress toward the project goal
 
-CURRENT WORKSPACE:
-{workspace_summary}
-
-TEAM OBJECTIVE:
-Continue development from the previous round. Review what has been accomplished, identify next priorities, and implement improvements. Each agent should build on the existing work and coordinate with the team.
-
-Focus on making meaningful progress toward the project goals.
+Let's collaborate to move this project forward!
 """
         
-        return prompt.strip()
+        # Add conversation summary if we have history
+        if self.conversation_history:
+            summary = self.token_optimizer.create_conversation_summary(self.conversation_history)
+            if summary and summary != "No significant activity":
+                base_prompt += f"\n\nPREVIOUS PROGRESS SUMMARY:\n{summary}\n"
+        
+        return base_prompt
     
     async def _process_round_result(self, round_num: int, result):
         """Process the result of a development round."""
@@ -317,11 +344,32 @@ Focus on making meaningful progress toward the project goals.
         
         if hasattr(result, 'messages'):
             for message in result.messages:
-                messages.append({
+                msg_data = {
                     "sender": message.source,
                     "content": message.content,
                     "timestamp": getattr(message, 'timestamp', None)
-                })
+                }
+                messages.append(msg_data)
+                
+                # Update progress display with each message
+                if self.progress_display:
+                    self.progress_display.agent_sent_message(message.source, message.content)
+        
+        # Track token usage for this round
+        round_tokens = sum(self.token_optimizer.count_message_tokens(msg) for msg in messages)
+        token_call_data = self.token_optimizer.track_api_call(
+            input_tokens=round_tokens,
+            output_tokens=round_tokens // 2,  # Rough estimate
+            cost_estimate=None
+        )
+        
+        # Update progress display with token usage
+        if self.progress_display:
+            usage_summary = self.token_optimizer.get_usage_summary()
+            self.progress_display.update_token_usage(
+                usage_summary["total_tokens_used"],
+                usage_summary["estimated_cost_usd"]
+            )
         
         # Save the conversation and workspace state
         await self.project_manager.save_round_state(round_num, messages)
@@ -330,12 +378,16 @@ Focus on making meaningful progress toward the project goals.
         self.conversation_history.extend(messages)
         
         if self.verbose:
-            print(f"Round {round_num} completed. {len(messages)} messages exchanged.")
+            print(f"Round {round_num} completed. {len(messages)} messages exchanged. "
+                  f"Token usage: {token_call_data['total_tokens']} tokens")
     
     async def _run_reflection(self, round_num: int):
         """Run a reflection phase to assess progress."""
         if self.verbose:
             print(f"Running reflection after round {round_num}")
+        
+        if self.progress_display:
+            self.progress_display.agent_started_action("System", f"Reflection phase")
         
         # Create reflection prompt
         workspace_summary = self.project_manager.get_workspace_summary()
@@ -366,17 +418,28 @@ Each agent should reflect on the work from their perspective and suggest improve
             reflection_messages = []
             if hasattr(reflection_result, 'messages'):
                 for message in reflection_result.messages:
-                    reflection_messages.append({
+                    msg_data = {
                         "sender": message.source,
                         "content": message.content,
                         "type": "reflection"
-                    })
+                    }
+                    reflection_messages.append(msg_data)
+                    
+                    # Update progress display
+                    if self.progress_display:
+                        self.progress_display.agent_sent_message(
+                            message.source, 
+                            f"[REFLECTION] {message.content}"
+                        )
             
             # Save reflection logs
             self.project_manager.logs.log_conversation(
                 round_num + 0.5,  # Use .5 to indicate reflection
                 reflection_messages
             )
+            
+            if self.progress_display:
+                self.progress_display.agent_completed_action("System", f"Reflection complete")
             
         except Exception as e:
             if self.verbose:
@@ -395,13 +458,25 @@ Each agent should reflect on the work from their perspective and suggest improve
             "model_used": self.model
         }
         
+        # Add token optimization summary
+        token_summary = self.token_optimizer.get_usage_summary()
+        
         return {
             **project_summary,
-            "squad_summary": squad_summary
+            "squad_summary": squad_summary,
+            "token_usage": token_summary
         }
+    
+    def get_progress_display(self) -> Optional[LiveProgressDisplay]:
+        """Get the progress display instance."""
+        return self.progress_display
     
     async def cleanup(self):
         """Cleanup resources."""
+        # Stop progress display
+        if self.progress_display:
+            self.progress_display.stop_live_display()
+        
         # Close model client if needed
         if hasattr(self.model_client, 'close'):
             await self.model_client.close()
