@@ -34,11 +34,13 @@ class BaseSquadAgent(AssistantAgent):
             # Note: tools parameter may need adjustment for 0.6.4 API
         )
     
-    def get_enhanced_system_message(self, base_template: str) -> str:
+    def get_enhanced_system_message(self, base_template: str, project_context: Dict[str, Any] = None) -> str:
         """Enhance the system message with project context."""
-        workspace_path = self.project_context.get("workspace_path", "")
-        current_files = self.project_context.get("current_files", [])
-        project_prompt = self.project_context.get("prompt", "")
+        # Use provided project_context or fall back to instance attribute
+        context = project_context or self.project_context
+        workspace_path = context.get("workspace_path", "")
+        current_files = context.get("current_files", [])
+        project_prompt = context.get("prompt", "")
         
         return base_template.format(
             project_prompt=project_prompt,

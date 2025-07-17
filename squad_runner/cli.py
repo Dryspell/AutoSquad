@@ -100,11 +100,25 @@ def run(
         ))
         
     except Exception as e:
-        console.print(Panel.fit(
-            f"❌ [bold red]Squad failed:[/bold red] {str(e)}",
-            title="Error",
-            border_style="red"
-        ))
+        error_msg = str(e)
+        
+        # Check if this is one of our friendly formatted error messages
+        if error_msg.startswith("🚫") or "OpenAI API" in error_msg:
+            # Display friendly error messages with better formatting
+            console.print(Panel(
+                error_msg,
+                title="❌ API Error",
+                border_style="red",
+                expand=True
+            ))
+        else:
+            # Display standard error message
+            console.print(Panel.fit(
+                f"❌ [bold red]Squad failed:[/bold red] {error_msg}",
+                title="Error",
+                border_style="red"
+            ))
+        
         if verbose:
             console.print_exception()
         raise click.ClickException(str(e))

@@ -71,7 +71,7 @@ I've implemented the core functionality with proper error handling. This require
 """
         
         # Get enhanced system message with project context
-        system_message = self.get_enhanced_system_message(system_message_template)
+        system_message = self.get_enhanced_system_message(system_message_template, project_context)
         
         # Initialize the base agent
         super().__init__(

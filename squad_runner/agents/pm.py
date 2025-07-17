@@ -55,7 +55,7 @@ Focus on delivering maximum user value within the available resources.
 """
         
         # Get enhanced system message with project context
-        system_message = self.get_enhanced_system_message(system_message_template)
+        system_message = self.get_enhanced_system_message(system_message_template, project_context)
         
         # Initialize the base agent
         super().__init__(

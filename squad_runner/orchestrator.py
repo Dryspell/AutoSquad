@@ -3,8 +3,10 @@ Squad Orchestrator - Coordinates AutoGen agents for development workflows
 """
 
 import asyncio
+import time
 from typing import Any, Dict, List, Optional
 
+import openai
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_ext.models.openai import OpenAIChatCompletionClient
@@ -103,25 +105,167 @@ class SquadOrchestrator:
         if self.verbose:
             print(f"Starting round {round_num} with prompt: {round_prompt[:100]}...")
         
-        # Run the conversation
-        try:
-            # Use AutoGen's group chat to run the conversation (v0.4 API)
-            result = await self.group_chat.run(
-                task=round_prompt
-                # Note: v0.4 API parameters may be different
-            )
+        # Run the conversation with retry logic for transient errors
+        max_retries = 3
+        retry_delay = 10  # seconds
+        
+        for attempt in range(max_retries + 1):
+            try:
+                if attempt > 0:
+                    if self.verbose:
+                        print(f"⏳ Retrying round {round_num} (attempt {attempt + 1}/{max_retries + 1}) after {retry_delay}s delay...")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                
+                # Use AutoGen's group chat to run the conversation (v0.4 API)
+                result = await self.group_chat.run(
+                    task=round_prompt
+                    # Note: v0.4 API parameters may be different
+                )
+                
+                # Process the conversation result
+                await self._process_round_result(round_num, result)
+                
+                # Reflection phase
+                if reflect and round_num % self.squad_profile.reflection_frequency == 0:
+                    await self._run_reflection(round_num)
+                
+                # If we get here, the round succeeded
+                if attempt > 0 and self.verbose:
+                    print(f"✅ Round {round_num} succeeded on attempt {attempt + 1}")
+                break
             
-            # Process the conversation result
-            await self._process_round_result(round_num, result)
+            except openai.RateLimitError as e:
+                if self.verbose:
+                    print(f"⚠️ OpenAI rate limit error in round {round_num} (attempt {attempt + 1}): {e}")
+                
+                # Check if this is the last attempt or if it's a quota error (not retryable)
+                is_quota_error = False
+                if hasattr(e, 'response') and e.response:
+                    try:
+                        error_data = e.response.json() if hasattr(e.response, 'json') else {}
+                        if 'error' in error_data:
+                            error_type = error_data['error'].get('type', 'rate_limit')
+                            is_quota_error = error_type == 'insufficient_quota'
+                    except:
+                        pass
+                
+                # Don't retry quota errors or if this is the last attempt
+                if is_quota_error or attempt >= max_retries:
+                    # Extract specific error details
+                    error_msg = "OpenAI API rate limit exceeded"
+                    if is_quota_error:
+                        error_msg = "OpenAI API quota exceeded - Please add credits to your account"
+                    elif attempt >= max_retries:
+                        error_msg = f"OpenAI API rate limit exceeded - Failed after {max_retries + 1} attempts"
+                    
+                    # Create a more helpful error message
+                    friendly_error = f"""
+🚫 {error_msg}
+
+💡 To resolve this issue:
+   • Check your OpenAI billing: https://platform.openai.com/settings/organization/billing
+   • Add credits to your account if quota is exceeded
+   • Wait a few minutes if hitting rate limits
+   • Consider upgrading your plan for higher limits
+
+Original error: {str(e)}
+"""
+                    
+                    raise RuntimeError(friendly_error) from e
+                
+                # Continue to next retry attempt
+                continue
             
-            # Reflection phase
-            if reflect and round_num % self.squad_profile.reflection_frequency == 0:
-                await self._run_reflection(round_num)
+            except openai.APIError as e:
+                if self.verbose:
+                    print(f"⚠️ OpenAI API error in round {round_num} (attempt {attempt + 1}): {e}")
+                
+                # Don't retry API errors on the last attempt
+                if attempt >= max_retries:
+                    friendly_error = f"""
+🚫 OpenAI API Error
+
+💡 This might be a temporary issue. Please try:
+   • Waiting a few minutes and retrying
+   • Checking OpenAI status: https://status.openai.com/
+   • Verifying your API key is valid
+
+Original error: {str(e)}
+"""
+                    
+                    raise RuntimeError(friendly_error) from e
+                
+                # Continue to next retry attempt for transient API errors
+                continue
             
-        except Exception as e:
-            if self.verbose:
-                print(f"Error in round {round_num}: {e}")
-            raise
+            except RuntimeError as e:
+                # Check if this is a wrapped OpenAI error from AutoGen
+                error_str = str(e)
+                if "RateLimitError" in error_str:
+                    if self.verbose:
+                        print(f"⚠️ OpenAI rate limit error in round {round_num} (attempt {attempt + 1}): {error_str}")
+                    
+                    # Check if this is a quota error (not retryable)
+                    is_quota_error = "insufficient_quota" in error_str
+                    
+                    # Don't retry quota errors or if this is the last attempt
+                    if is_quota_error or attempt >= max_retries:
+                        # Create a more helpful error message
+                        if is_quota_error:
+                            error_msg = "OpenAI API quota exceeded - Please add credits to your account"
+                        else:
+                            error_msg = f"OpenAI API rate limit exceeded - Failed after {max_retries + 1} attempts"
+                        
+                        friendly_error = f"""
+🚫 {error_msg}
+
+💡 To resolve this issue:
+   • Check your OpenAI billing: https://platform.openai.com/settings/organization/billing
+   • Add credits to your account if quota is exceeded
+   • Wait a few minutes if hitting rate limits
+   • Consider upgrading your plan for higher limits
+
+Original error: {error_str}
+"""
+                        
+                        raise RuntimeError(friendly_error) from e
+                    
+                    # Continue to next retry attempt for retryable rate limits
+                    continue
+                
+                elif "APIError" in error_str or "openai" in error_str.lower():
+                    if self.verbose:
+                        print(f"⚠️ OpenAI API error in round {round_num} (attempt {attempt + 1}): {error_str}")
+                    
+                    # Don't retry API errors on the last attempt
+                    if attempt >= max_retries:
+                        friendly_error = f"""
+🚫 OpenAI API Error
+
+💡 This might be a temporary issue. Please try:
+   • Waiting a few minutes and retrying
+   • Checking OpenAI status: https://status.openai.com/
+   • Verifying your API key is valid
+
+Original error: {error_str}
+"""
+                        
+                        raise RuntimeError(friendly_error) from e
+                    
+                    # Continue to next retry attempt for transient API errors
+                    continue
+                
+                else:
+                    # Not an OpenAI error, re-raise immediately
+                    if self.verbose:
+                        print(f"Error in round {round_num}: {e}")
+                    raise
+            
+            except Exception as e:
+                if self.verbose:
+                    print(f"Error in round {round_num}: {e}")
+                raise
     
     def _create_round_prompt(
         self, 
