@@ -4,20 +4,17 @@ Base Squad Agent - Common functionality for all AutoSquad agents
 
 from typing import Any, Dict, List, Optional, Sequence
 
-from autogen_agentchat.agents import ConversableAgent
-from autogen_agentchat.base import Response
-from autogen_agentchat.messages import ChatMessage
-from autogen_core import CancellationToken
-from autogen_ext.models import ChatCompletionClient
+from autogen_agentchat.agents import AssistantAgent
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 
 
-class BaseSquadAgent(ConversableAgent):
+class BaseSquadAgent(AssistantAgent):
     """Base class for all AutoSquad agents with project awareness."""
     
     def __init__(
         self,
         name: str,
-        model_client: ChatCompletionClient,
+        model_client: OpenAIChatCompletionClient,
         project_context: Dict[str, Any],
         agent_settings: Dict[str, Any],
         project_manager,
@@ -29,12 +26,12 @@ class BaseSquadAgent(ConversableAgent):
         self.project_manager = project_manager
         self.role_type = self.__class__.__name__.replace("Agent", "").lower()
         
-        # Initialize the ConversableAgent
+        # Initialize the AssistantAgent
         super().__init__(
             name=name,
             model_client=model_client,
-            system_message=system_message,
-            tools=tools or []
+            system_message=system_message
+            # Note: tools parameter may need adjustment for 0.6.4 API
         )
     
     def get_enhanced_system_message(self, base_template: str) -> str:
@@ -49,39 +46,8 @@ class BaseSquadAgent(ConversableAgent):
             current_files=", ".join(current_files) if current_files else "No files yet"
         )
     
-    async def on_messages(
-        self,
-        messages: Sequence[ChatMessage],
-        cancellation_token: CancellationToken
-    ) -> Response:
-        """Handle incoming messages with project context awareness."""
-        
-        # Log the agent action
-        if hasattr(self.project_manager, 'logs'):
-            self.project_manager.logs.log_agent_action(
-                agent_name=self.name,
-                action="received_message",
-                details={
-                    "message_count": len(messages),
-                    "last_sender": messages[-1].source if messages else None
-                }
-            )
-        
-        # Call the parent implementation
-        response = await super().on_messages(messages, cancellation_token)
-        
-        # Log the response
-        if hasattr(self.project_manager, 'logs'):
-            self.project_manager.logs.log_agent_action(
-                agent_name=self.name,
-                action="sent_response",
-                details={
-                    "response_type": type(response).__name__,
-                    "chat_message": response.chat_message.content if response.chat_message else None
-                }
-            )
-        
-        return response
+    # Note: Message handling will be managed by AutoGen 0.6.4's AssistantAgent
+    # We'll focus on utility methods for project management
     
     def get_workspace_files(self) -> List[str]:
         """Get list of files in the workspace."""

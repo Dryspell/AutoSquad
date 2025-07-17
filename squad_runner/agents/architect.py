@@ -4,7 +4,7 @@ Architect Agent - Specialized for code review and architecture design
 
 from typing import Any, Dict, List
 
-from autogen_ext.models import ChatCompletionClient
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 
 from .base import BaseSquadAgent
 
@@ -14,7 +14,7 @@ class ArchitectAgent(BaseSquadAgent):
     
     def __init__(
         self,
-        model_client: ChatCompletionClient,
+        model_client: OpenAIChatCompletionClient,
         project_context: Dict[str, Any],
         agent_settings: Dict[str, Any],
         project_manager

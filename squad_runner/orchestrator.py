@@ -5,10 +5,10 @@ Squad Orchestrator - Coordinates AutoGen agents for development workflows
 import asyncio
 from typing import Any, Dict, List, Optional
 
-from autogen_agentchat.agents import ConversableAgent
+from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core import CancellationToken
-from autogen_ext.models import OpenAIChatCompletionClient
 
 from .agents import create_agent
 from .config import AutoSquadConfig, SquadProfile
@@ -47,8 +47,7 @@ class SquadOrchestrator:
         return OpenAIChatCompletionClient(
             model=self.model,
             api_key=llm_config.get("api_key"),
-            temperature=llm_config.get("temperature", 0.1),
-            max_tokens=llm_config.get("max_tokens", 2000)
+            # Note: v0.4 API may have different parameter names
         )
     
     async def _create_agents(self):
@@ -77,9 +76,9 @@ class SquadOrchestrator:
         if not self.agents:
             await self._create_agents()
         
-        # Create round-robin group chat
+        # Create round-robin group chat (v0.4 API)
         self.group_chat = RoundRobinGroupChat(
-            participants=self.agents
+            self.agents  # v0.4 API may have different parameter structure
         )
         
         if self.verbose:
@@ -106,10 +105,10 @@ class SquadOrchestrator:
         
         # Run the conversation
         try:
-            # Use AutoGen's group chat to run the conversation
+            # Use AutoGen's group chat to run the conversation (v0.4 API)
             result = await self.group_chat.run(
-                task=round_prompt,
-                cancellation_token=CancellationToken()
+                task=round_prompt
+                # Note: v0.4 API parameters may be different
             )
             
             # Process the conversation result

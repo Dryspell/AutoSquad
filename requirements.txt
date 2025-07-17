@@ -1,7 +1,6 @@
-# AutoGen Framework
-autogen-agentchat>=0.4.0
-autogen-core>=0.4.0
-autogen-ext>=0.4.0
+# AutoGen Framework v0.4 with OpenAI support
+autogen-agentchat
+autogen-ext[openai]
 
 # CLI and Configuration
 click>=8.1.0

@@ -9,12 +9,12 @@ from .pm import PMAgent
 from .qa import QAAgent
 
 from typing import Any, Dict
-from autogen_ext.models import ChatCompletionClient
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 
 
 async def create_agent(
     agent_type: str,
-    model_client: ChatCompletionClient,
+    model_client: OpenAIChatCompletionClient,
     project_context: Dict[str, Any],
     agent_settings: Dict[str, Any],
     project_manager
