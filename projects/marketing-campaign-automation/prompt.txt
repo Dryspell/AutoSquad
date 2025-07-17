@@ -1,0 +1,70 @@
+Build an intelligent marketing campaign automation platform called "CampaignIQ" that helps small businesses create, execute, and optimize multi-channel marketing campaigns with minimal manual effort.
+
+## Campaign Types & Channels
+1. **Email Marketing Campaigns** (welcome series, newsletters, product launches)
+2. **Social Media Campaigns** (Facebook, Instagram, LinkedIn, Twitter)
+3. **Content Marketing** (blog posts, landing pages, lead magnets)
+4. **Paid Advertising** (Google Ads, Facebook Ads campaign management)
+5. **SMS/Text Marketing** (appointment reminders, promotional offers)
+
+## Core Platform Features
+- **Drag-and-drop campaign builder** with pre-built templates for common scenarios
+- **Customer journey mapping** with visual workflow designer
+- **A/B testing framework** for subject lines, content, and creative elements
+- **Behavioral trigger automation** (abandoned cart, birthday, anniversary campaigns)
+- **Lead scoring and segmentation** based on engagement and demographics
+- **Cross-channel analytics dashboard** with ROI tracking and attribution
+- **AI-powered content suggestions** for subject lines, social posts, and ad copy
+
+## Technical Implementation
+- **React/TypeScript frontend** with modern, intuitive user interface
+- **Node.js/Express backend** with PostgreSQL database
+- **Redis queue system** for campaign scheduling and delivery
+- **Webhook integrations** with major marketing platforms (Mailchimp, HubSpot, Hootsuite)
+- **Third-party API connections** to social platforms and advertising networks
+- **Real-time analytics processing** using time-series database (InfluxDB)
+- **Machine learning pipeline** for campaign optimization and prediction
+
+## Business Intelligence Features
+- **Campaign Performance Analytics**: Open rates, click-through rates, conversion tracking
+- **Customer Lifetime Value calculation** and predictive modeling
+- **Attribution reporting** across all marketing touchpoints
+- **Cohort analysis** to track customer behavior over time
+- **Competitive analysis** tools for market research and benchmarking
+- **Budget optimization** recommendations based on channel performance
+- **Automated reporting** with customizable dashboards for stakeholders
+
+## Automation & AI Capabilities
+- **Smart send time optimization** based on individual customer behavior
+- **Content personalization** using customer data and preferences
+- **Predictive analytics** for campaign success probability
+- **Automatic audience expansion** finding similar customers to high-performers
+- **Sentiment analysis** of social media engagement and feedback
+- **Churn prediction** with automated retention campaigns
+- **Dynamic pricing recommendations** for promotional campaigns
+
+## Integration Ecosystem
+- **CRM Systems**: HubSpot, Salesforce, Pipedrive
+- **E-commerce Platforms**: Shopify, WooCommerce, BigCommerce
+- **Email Providers**: Mailchimp, Constant Contact, SendGrid
+- **Social Media**: Facebook Business, LinkedIn Ads, Twitter Ads
+- **Analytics**: Google Analytics, Facebook Pixel, LinkedIn Insight Tag
+- **Payment Processing**: Stripe, PayPal for e-commerce attribution
+
+## User Experience Design
+- **Onboarding wizard** that sets up first campaign in under 10 minutes
+- **Template marketplace** with industry-specific campaign blueprints
+- **Collaboration tools** for team reviews and approvals
+- **Mobile app** for monitoring campaigns and responding to alerts
+- **White-label options** for marketing agencies serving multiple clients
+- **Comprehensive help system** with video tutorials and best practices
+
+## Compliance & Security
+- **GDPR/CCPA compliance** with automated consent management
+- **CAN-SPAM compliance** for email marketing regulations
+- **Data encryption** for customer information and campaign data
+- **Audit trails** for all campaign activities and changes
+- **Role-based access control** for team collaboration
+- **Backup and disaster recovery** for business continuity
+
+The platform should empower small business owners to create sophisticated marketing campaigns that rival enterprise-level efforts, while providing actionable insights to continuously improve their marketing ROI. 

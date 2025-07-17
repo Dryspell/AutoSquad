@@ -1,0 +1,34 @@
+Build a professional B2B sales website for "DataSync Solutions" - a small business that helps companies integrate their CRM systems with third-party tools. The website should:
+
+## Core Requirements
+1. **Landing Page** with compelling value proposition and lead capture form
+2. **Services Page** detailing CRM integration, data migration, and automation services  
+3. **Case Studies Page** with 3-4 customer success stories and ROI metrics
+4. **About Page** with team bios and company story
+5. **Contact Page** with consultation booking calendar integration
+6. **Blog Section** with 5-10 SEO-optimized articles about CRM best practices
+
+## Technical Specifications
+- Modern, responsive design using React/Next.js or similar framework
+- Mobile-first responsive layout that works perfectly on all devices
+- Fast loading times (< 3 seconds) with optimized images and code
+- SEO-optimized with proper meta tags, structured data, and sitemap
+- Contact forms with email integration and lead nurturing sequences
+- Analytics integration (Google Analytics 4) with conversion tracking
+- GDPR-compliant cookie consent and privacy policy
+
+## Business Requirements  
+- Professional, trustworthy design that converts visitors into leads
+- Clear pricing tiers (Starter, Professional, Enterprise) with feature comparisons
+- Customer testimonials and social proof throughout the site
+- Lead magnets (free CRM audit checklist, integration guide PDF)
+- Conversion-optimized CTAs on every page
+- Integration with business email and CRM for lead management
+
+## Content Strategy
+- Target audience: Small to medium business owners struggling with disconnected systems
+- Focus on pain points: manual data entry, lost leads, incomplete customer views
+- Emphasize benefits: time savings, improved accuracy, better customer relationships
+- Include industry-specific examples (real estate, e-commerce, professional services)
+
+The website should position DataSync Solutions as the go-to expert for CRM integrations, with a focus on practical results and excellent customer service. 

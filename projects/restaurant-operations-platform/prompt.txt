@@ -1,0 +1,119 @@
+Build "RestaurantIQ" - a comprehensive restaurant management and optimization platform that helps restaurant owners, chefs, and managers streamline operations, maximize profitability, and deliver exceptional customer experiences through data-driven insights and automated workflows.
+
+## Core Restaurant Operations
+1. **Menu Engineering & Optimization** - Data-driven menu design with profitability analysis and customer preference tracking
+2. **Inventory & Supply Chain Management** - Automated ordering, waste reduction, and cost optimization
+3. **Staff Scheduling & Management** - Intelligent scheduling with labor cost optimization and performance tracking
+4. **Customer Experience Management** - Reservation systems, feedback analysis, and loyalty programs
+5. **Financial Analytics & Reporting** - Real-time P&L, cost analysis, and profitability insights
+6. **Kitchen Operations Optimization** - Workflow efficiency, food safety compliance, and quality control
+
+## Menu Engineering & Food Cost Management
+- **Recipe Cost Calculator** with real-time ingredient pricing and margin analysis
+- **Menu Performance Analytics** tracking sales velocity, profitability, and customer preferences
+- **Seasonal Menu Planning** with ingredient availability and cost forecasting
+- **Nutritional Analysis** with allergen tracking and dietary restriction accommodation
+- **Competitor Price Analysis** and market positioning recommendations
+- **Menu Psychology Optimization** using design principles to increase average order value
+- **A/B Testing Framework** for menu items, descriptions, and pricing strategies
+
+## Inventory & Supply Chain Intelligence
+- **Automated Inventory Tracking** with POS integration and real-time stock levels
+- **Predictive Ordering System** based on sales forecasts and seasonal patterns
+- **Supplier Relationship Management** with performance tracking and cost optimization
+- **Waste Reduction Analytics** identifying spoilage patterns and optimization opportunities
+- **Food Safety Compliance** with temperature monitoring and expiration date tracking
+- **Cost Variance Analysis** comparing actual vs. theoretical food costs
+- **Local Sourcing Optimization** for fresh ingredients and community partnerships
+
+## Staff Management & Labor Optimization
+- **Intelligent Scheduling System** balancing labor costs with service quality requirements
+- **Skills-Based Task Assignment** matching staff capabilities with operational needs
+- **Performance Tracking & Analytics** measuring productivity, customer service scores, and growth
+- **Training Program Management** with competency tracking and certification requirements
+- **Labor Cost Forecasting** with scenario planning for different business volumes
+- **Employee Retention Analytics** identifying turnover risks and improvement opportunities
+- **Tip Distribution & Payroll Integration** with fair compensation tracking
+
+## Customer Experience & Marketing
+- **Reservation Management System** with table optimization and wait time prediction
+- **Customer Feedback Analysis** using sentiment analysis and review monitoring
+- **Loyalty Program Management** with personalized offers and retention campaigns
+- **Social Media Integration** for reviews, photos, and community engagement
+- **Event Planning & Catering** with booking management and resource allocation
+- **Personalized Dining Recommendations** based on customer history and preferences
+- **Marketing Campaign Automation** for promotions, special events, and seasonal offerings
+
+## Financial Analytics & Business Intelligence
+- **Real-Time P&L Dashboard** with daily, weekly, and monthly performance tracking
+- **Cost Center Analysis** breaking down expenses by category (food, labor, overhead)
+- **Revenue Optimization** analyzing peak hours, table turnover, and average check size
+- **Break-Even Analysis** for new menu items, promotions, and operational changes
+- **Cash Flow Forecasting** with seasonal adjustments and growth projections
+- **Profitability by Customer Segment** identifying high-value dining patterns
+- **Tax Preparation & Compliance** with automated reporting and deduction tracking
+
+## Kitchen Operations & Quality Control
+- **Recipe Standardization** ensuring consistency across all preparation and service
+- **Kitchen Workflow Optimization** reducing preparation times and minimizing bottlenecks
+- **Food Safety Management** with HACCP compliance and health department reporting
+- **Quality Control Checklists** for food preparation, presentation, and service standards
+- **Equipment Maintenance Scheduling** preventing breakdowns and optimizing performance
+- **Portion Control Analytics** ensuring consistency and cost management
+- **Cook Time Optimization** balancing speed with quality for different menu items
+
+## Technical Architecture
+- **React/Node.js web application** with real-time updates and mobile responsiveness
+- **Cloud-based infrastructure** ensuring reliability and scalability
+- **POS System Integration** with Square, Toast, Resy, and other restaurant platforms
+- **IoT Sensor Integration** for temperature monitoring, equipment status, and inventory tracking
+- **Machine Learning Analytics** for demand forecasting and optimization recommendations
+- **Mobile Apps** for staff scheduling, inventory management, and customer engagement
+- **API Integrations** with food delivery platforms, review sites, and social media
+
+## Regulatory Compliance & Safety
+- **Health Department Compliance** with automated reporting and violation tracking
+- **Food Safety Certification** management and renewal reminders
+- **Labor Law Compliance** ensuring proper scheduling, breaks, and wage requirements
+- **Liquor License Management** with sales tracking and regulatory reporting
+- **Fire Safety & Emergency Procedures** with staff training and protocol management
+- **Insurance Claims Management** with incident reporting and documentation
+- **Data Privacy Compliance** protecting customer information and payment data
+
+## Multi-Location Management
+- **Centralized Dashboard** for restaurant chains and franchise operations
+- **Standardized Processes** ensuring consistency across multiple locations
+- **Performance Benchmarking** comparing locations and identifying best practices
+- **Supply Chain Coordination** with bulk purchasing and distribution optimization
+- **Brand Management Tools** maintaining consistent quality and customer experience
+- **Franchise Support System** with training, marketing, and operational guidance
+- **Regional Analytics** adapting strategies for local markets and preferences
+
+## Industry-Specific Modules
+- **Fine Dining**: Wine pairing recommendations, special event management, premium service protocols
+- **Fast Casual**: Speed optimization, order accuracy tracking, delivery coordination
+- **Food Trucks**: Route planning, permit management, mobile payment processing
+- **Catering**: Event planning, large-order logistics, dietary restriction management
+- **Bars & Breweries**: Beverage inventory, cocktail costing, alcohol compliance
+- **Coffee Shops**: Loyalty programs, seasonal menu planning, morning rush optimization
+- **Franchises**: Brand compliance, standardized reporting, multi-location coordination
+
+## Customer Data & Personalization
+- **Customer Profile Management** with dining history, preferences, and allergies
+- **Personalized Menu Recommendations** based on past orders and dietary restrictions
+- **Special Occasion Tracking** for birthdays, anniversaries, and celebrations
+- **Feedback Loop Integration** connecting customer comments to operational improvements
+- **Social Media Sentiment Analysis** monitoring brand reputation and customer satisfaction
+- **Waitlist Management** with SMS notifications and estimated wait times
+- **VIP Customer Recognition** with automatic identification and special treatment protocols
+
+## Sustainability & Social Responsibility
+- **Food Waste Tracking** with reduction strategies and donation coordination
+- **Sustainability Metrics** measuring environmental impact and improvement opportunities
+- **Local Community Integration** supporting local suppliers and community events
+- **Nutritional Transparency** providing detailed ingredient and nutrition information
+- **Eco-Friendly Operations** tracking energy usage, recycling, and sustainable practices
+- **Charitable Program Management** coordinating donations and community service
+- **Employee Wellness Programs** supporting staff health and work-life balance
+
+The platform should transform restaurant operations from reactive management to proactive optimization, helping restaurant owners build profitable, sustainable businesses while delivering exceptional dining experiences that keep customers coming back. 

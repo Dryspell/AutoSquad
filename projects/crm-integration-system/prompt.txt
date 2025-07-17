@@ -1,0 +1,50 @@
+Build a comprehensive CRM integration system that automatically syncs customer data between HubSpot CRM and multiple third-party platforms. This system should help small businesses maintain consistent customer information across all their tools without manual data entry.
+
+## Core Integration Targets
+1. **HubSpot CRM** (primary system) ↔ **Mailchimp** (email marketing)
+2. **HubSpot CRM** ↔ **Stripe** (payment processing) 
+3. **HubSpot CRM** ↔ **Calendly** (appointment scheduling)
+4. **HubSpot CRM** ↔ **QuickBooks Online** (accounting/invoicing)
+5. **HubSpot CRM** ↔ **Slack** (team notifications)
+
+## Technical Requirements
+- **Python-based integration service** using FastAPI framework
+- **Real-time webhook processing** for instant data synchronization
+- **Bidirectional sync** with conflict resolution (last-modified-wins strategy)
+- **Error handling and retry logic** with exponential backoff
+- **Comprehensive logging** for audit trails and troubleshooting
+- **Data validation and transformation** to handle different field formats
+- **Rate limiting compliance** to respect API quotas for all platforms
+- **Secure credential management** using environment variables and encryption
+
+## Data Mapping & Transformation
+- **Contact Synchronization**: Name, email, phone, company, tags, custom fields
+- **Deal/Opportunity Sync**: Amount, stage, close date, product details
+- **Activity Tracking**: Emails, calls, meetings, notes across platforms
+- **Financial Data**: Invoice status, payment history, subscription details
+- **Marketing Data**: Campaign performance, email engagement, lead scoring
+
+## Business Logic Features
+- **Duplicate Detection**: Prevent duplicate contacts across systems
+- **Lead Scoring Integration**: Update HubSpot scores based on multi-platform activity
+- **Automated Workflows**: Trigger actions based on data changes (e.g., new customer → welcome email)
+- **Custom Field Mapping**: Handle business-specific data requirements
+- **Data Cleanup**: Standardize phone numbers, addresses, company names
+- **Reporting Dashboard**: Show sync status, errors, and integration health
+
+## Deployment & Monitoring
+- **Docker containerization** for easy deployment
+- **Health check endpoints** for monitoring system status
+- **Prometheus metrics** for performance monitoring
+- **Email alerts** for sync failures or critical errors
+- **Database persistence** for sync history and configuration
+- **Admin web interface** for managing connections and viewing logs
+
+## Security & Compliance
+- **OAuth 2.0 authentication** for all API connections
+- **Data encryption** at rest and in transit
+- **GDPR compliance** with data deletion capabilities
+- **Access logging** for security audits
+- **Configurable data retention** policies
+
+The system should be robust enough for production use while remaining simple enough for small business owners to configure and maintain with minimal technical expertise. 
