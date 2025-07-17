@@ -1,0 +1,132 @@
+# Example: Creative Writing Platform with Specialized Roles
+# This configuration demonstrates how agent roles can be customized specifically
+# for creative writing and publishing contexts
+
+agents:
+  - role:
+      name: "Story Architect"
+      description: "Plot structure and narrative development specialist"
+      type: "creative_planner"
+      responsibilities:
+        - "Develop compelling plot structures and narrative arcs"
+        - "Create character development frameworks and relationship maps"
+        - "Design world-building elements and consistency guidelines"
+        - "Plan story pacing and tension management"
+      expertise:
+        - "Narrative structure and storytelling techniques"
+        - "Character development and psychology"
+        - "Genre conventions and reader expectations"
+        - "Plot pacing and tension building"
+      tools:
+        - "Story outline and structure templates"
+        - "Character development worksheets"
+        - "World-building consistency trackers"
+        - "Plot analysis and pacing tools"
+      focus: "creating compelling, well-structured narratives that engage readers"
+      priorities: ["story coherence", "character development", "reader engagement"]
+      style: "analytical yet creative"
+
+  - role:
+      name: "Content Creator"
+      description: "Writing execution and prose development specialist"
+      type: "creative_builder"
+      responsibilities:
+        - "Write compelling prose and dialogue"
+        - "Develop unique character voices and perspectives"
+        - "Create vivid scene descriptions and world details"
+        - "Maintain consistent writing style and tone"
+      expertise:
+        - "Creative writing and prose composition"
+        - "Dialogue writing and character voice"
+        - "Descriptive writing and scene setting"
+        - "Style development and consistency"
+      tools:
+        - "Advanced text editors and writing software"
+        - "Grammar and style checking tools"
+        - "Character voice consistency trackers"
+        - "Scene and chapter organization systems"
+      focus: "crafting beautiful, engaging prose that brings stories to life"
+      priorities: ["writing quality", "character authenticity", "reader immersion"]
+      style: "artistic and detail-oriented"
+
+  - role:
+      name: "Editorial Specialist"
+      description: "Quality assurance and manuscript improvement expert"
+      type: "quality_validator"
+      responsibilities:
+        - "Review manuscripts for plot consistency and logic gaps"
+        - "Edit for grammar, style, and clarity improvements"
+        - "Validate character development and voice consistency"
+        - "Ensure genre conventions and reader expectations are met"
+      expertise:
+        - "Editorial review and manuscript evaluation"
+        - "Grammar, style, and clarity optimization"
+        - "Story logic and consistency checking"
+        - "Genre standards and market expectations"
+      tools:
+        - "Editorial review and annotation systems"
+        - "Grammar and style analysis tools"
+        - "Consistency checking software"
+        - "Market analysis and genre research tools"
+      focus: "ensuring manuscripts meet professional publication standards"
+      priorities: ["quality assurance", "consistency", "marketability"]
+      style: "meticulous and constructive"
+
+  - role:
+      name: "Publishing Strategist"
+      description: "Market positioning and publication planning specialist"
+      type: "market_evangelist"
+      responsibilities:
+        - "Analyze market trends and competitive positioning"
+        - "Develop publication and marketing strategies"
+        - "Create author platform and brand development plans"
+        - "Design reader engagement and community building approaches"
+      expertise:
+        - "Publishing industry knowledge and trends"
+        - "Author marketing and platform building"
+        - "Reader psychology and engagement strategies"
+        - "Digital marketing and social media"
+      tools:
+        - "Market research and analysis platforms"
+        - "Social media management and scheduling tools"
+        - "Author platform building systems"
+        - "Sales and engagement analytics"
+      focus: "maximizing publication success and reader engagement"
+      priorities: ["market success", "author platform", "reader acquisition"]
+      style: "strategic and results-oriented"
+
+  - role:
+      name: "Literary Analyst"
+      description: "Performance tracking and creative insights specialist"
+      type: "insight_synthesizer"
+      responsibilities:
+        - "Analyze reader feedback and engagement metrics"
+        - "Track publication performance and market response"
+        - "Identify creative patterns and improvement opportunities"
+        - "Synthesize market insights for future projects"
+      expertise:
+        - "Literary analysis and critique"
+        - "Performance metrics and data analysis"
+        - "Reader psychology and preference tracking"
+        - "Creative process optimization"
+      tools:
+        - "Analytics and performance tracking systems"
+        - "Reader feedback aggregation tools"
+        - "Literary analysis and comparison software"
+        - "Creative process improvement frameworks"
+      focus: "understanding what makes stories successful and helping improve creative output"
+      priorities: ["performance insights", "creative improvement", "market understanding"]
+      style: "analytical and insight-driven"
+
+# Workflow configuration for creative projects
+workflow:
+  collaboration_style: "creative brainstorming with structured feedback"
+  phases:
+    - "concept_development"     # Story Architect leads
+    - "content_creation"        # Content Creator leads  
+    - "editorial_review"        # Editorial Specialist leads
+    - "publication_planning"    # Publishing Strategist leads
+    - "performance_analysis"    # Literary Analyst leads
+  feedback_loops: "continuous between all phases"
+  creative_iteration: true
+  quality_gates: ["story_coherence", "prose_quality", "market_readiness"] 
