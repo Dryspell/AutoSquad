@@ -19,75 +19,15 @@ class EngineerAgent(BaseSquadAgent):
         agent_settings: Dict[str, Any],
         project_manager
     ):
-        # Define the system message template
-        system_message_template = """
-You are an experienced Software Engineer working on a development team. Your role is to implement features, write clean code, and solve technical problems.
-
-CORE RESPONSIBILITIES:
-- Write production-ready code based on requirements
-- Create and modify files in the project workspace  
-- Install necessary dependencies and manage project setup
-- Debug issues and fix bugs in existing code
-- Write basic tests for your implementations
-- Follow best practices for the chosen technology stack
-
-WORKING STYLE:
-- Start with the simplest solution that works
-- Write clear, readable code with appropriate comments
-- Ask for clarification when requirements are unclear
-- Test your code before considering it complete
-- Communicate progress and blockers clearly
-
-AVAILABLE TOOLS:
-You have access to these function calling tools for workspace operations:
-
-1. **write_file(file_path, content, description)** - Create or update files
-   - Use this to implement code, create config files, documentation, etc.
-   - Always provide complete, working file content
-   - Include helpful descriptions
-
-2. **read_file(file_path)** - Read existing files
-   - Use this to understand current codebase before making changes
-   - Review existing implementations and patterns
-
-3. **list_files()** - See all current workspace files
-   - Use this to understand project structure
-   - Check what files already exist
-
-4. **create_directory(dir_path)** - Create directory structures
-   - Use this to organize code into proper folder structures
-
-IMPLEMENTATION APPROACH:
-When implementing features:
-1. Use list_files() to see current workspace state
-2. Use read_file() to understand existing code (if any)
-3. Use write_file() to create/update implementation files
-4. Use create_directory() to organize code structure
-
-Always call the appropriate tools to actually create the files - don't just describe what you would do!
-
-PROJECT CONTEXT:
-{project_prompt}
-
-CURRENT WORKSPACE: {workspace_path}
-AVAILABLE FILES: {current_files}
-
-Always work within the designated workspace and coordinate with your teammates.
-
-IMPORTANT: When you need to create or modify files, use the write_file function tool. When you need to read files, use the read_file function tool. The team is counting on you to actually implement working code!
-"""
-        
-        # Get enhanced system message with project context
-        system_message = self.get_enhanced_system_message(system_message_template, project_context)
-        
-        # Initialize the base agent
+        # Initialize with enhanced prompts (no custom system_message)
+        # The base class will automatically use enhanced prompts based on agent type
         super().__init__(
-            name="Engineer",
+            name="Senior Software Engineer",
             model_client=model_client,
             project_context=project_context,
             agent_settings=agent_settings,
             project_manager=project_manager,
-            system_message=system_message
+            # No system_message parameter = use enhanced prompts automatically
         )
         
         # Engineer-specific settings

@@ -1,5 +1,6 @@
 """
 Base Squad Agent - Common functionality for all AutoSquad agents
+Enhanced with patterns from well-funded AI companies
 """
 
 from typing import Any, Dict, List, Optional, Sequence, Callable
@@ -11,6 +12,7 @@ from autogen_core import CancellationToken
 from autogen_core.tools import FunctionTool
 
 from ..tools import create_workspace_tools
+from .enhanced_prompts import get_enhanced_agent_prompt
 
 
 class BaseSquadAgent(AssistantAgent):
@@ -23,8 +25,9 @@ class BaseSquadAgent(AssistantAgent):
         project_context: Dict[str, Any],
         agent_settings: Dict[str, Any],
         project_manager,
-        system_message: str,
-        tools: Optional[List] = None
+        system_message: Optional[str] = None,
+        tools: Optional[List] = None,
+        use_enhanced_prompts: bool = True
     ):
         self.project_context = project_context
         self.agent_settings = agent_settings
@@ -40,7 +43,19 @@ class BaseSquadAgent(AssistantAgent):
         # Progress tracking callback (will be set by orchestrator)
         self.progress_callback = None
         
-        # Initialize the AssistantAgent with tools
+        # Generate enhanced system message if enabled and no custom message provided
+        if use_enhanced_prompts and system_message is None:
+            enhanced_context = {
+                'project_prompt': project_context.get('prompt', ''),
+                'workspace_path': project_context.get('workspace_path', ''),
+                'current_files': project_context.get('current_files', [])
+            }
+            system_message = get_enhanced_agent_prompt(self.role_type, enhanced_context)
+        elif system_message is None:
+            # Fallback to basic system message
+            system_message = f"You are a {self.role_type} agent in the AutoSquad development framework."
+        
+        # Initialize the AssistantAgent with enhanced system message and tools
         super().__init__(
             name=name,
             model_client=model_client,
@@ -120,19 +135,30 @@ class BaseSquadAgent(AssistantAgent):
         
         return function_tools
     
-    def get_enhanced_system_message(self, base_template: str, project_context: Dict[str, Any] = None) -> str:
-        """Enhance the system message with project context."""
+    def get_enhanced_system_message(self, project_context: Dict[str, Any] = None) -> str:
+        """Get enhanced system message using AI company patterns."""
         # Use provided project_context or fall back to instance attribute
         context = project_context or self.project_context
-        workspace_path = context.get("workspace_path", "")
-        current_files = context.get("current_files", [])
-        project_prompt = context.get("prompt", "")
         
-        return base_template.format(
-            project_prompt=project_prompt,
-            workspace_path=workspace_path,
-            current_files=", ".join(current_files) if current_files else "No files yet"
-        )
+        enhanced_context = {
+            'project_prompt': context.get('prompt', ''),
+            'workspace_path': context.get('workspace_path', ''),
+            'current_files': context.get('current_files', [])
+        }
+        
+        return get_enhanced_agent_prompt(self.role_type, enhanced_context)
+    
+    def update_project_context(self, new_context: Dict[str, Any]):
+        """Update project context and regenerate enhanced system message if needed."""
+        self.project_context.update(new_context)
+        
+        # Update current files list from workspace if available
+        if hasattr(self, 'project_manager') and self.project_manager:
+            try:
+                current_files = self.get_workspace_files()
+                self.project_context['current_files'] = current_files
+            except Exception:
+                pass  # Ignore errors if workspace is not available
     
     # Note: Message handling will be managed by AutoGen 0.6.4's AssistantAgent
     # We'll focus on utility methods for project management

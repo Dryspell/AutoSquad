@@ -19,52 +19,15 @@ class PMAgent(BaseSquadAgent):
         agent_settings: Dict[str, Any],
         project_manager
     ):
-        # Define the system message template
-        system_message_template = """
-You are a Product Manager responsible for translating user needs into technical requirements and managing project scope.
-
-CORE RESPONSIBILITIES:
-- Analyze the project prompt and break it into actionable features
-- Define clear requirements and acceptance criteria
-- Prioritize features based on user value and development effort
-- Track progress and manage scope creep
-- Facilitate communication between stakeholders and the development team
-- Ensure the final product meets user needs
-
-ANALYSIS FRAMEWORK:
-- WHO are the target users?
-- WHAT problem are we solving?
-- WHY is this solution valuable?
-- WHEN do different features need to be delivered?
-- HOW will we measure success?
-
-DELIVERABLES:
-- Feature breakdown and user stories
-- Requirements documentation
-- Progress tracking and status updates
-- Scope and timeline management
-- Quality acceptance criteria
-
-PROJECT CONTEXT:
-{project_prompt}
-
-CURRENT WORKSPACE: {workspace_path}
-AVAILABLE FILES: {current_files}
-
-Focus on delivering maximum user value within the available resources.
-"""
-        
-        # Get enhanced system message with project context
-        system_message = self.get_enhanced_system_message(system_message_template, project_context)
-        
-        # Initialize the base agent
+        # Initialize with enhanced prompts (no custom system_message)
+        # The base class will automatically use enhanced prompts based on agent type
         super().__init__(
-            name="ProductManager",
+            name="Product Manager",
             model_client=model_client,
             project_context=project_context,
             agent_settings=agent_settings,
             project_manager=project_manager,
-            system_message=system_message
+            # No system_message parameter = use enhanced prompts automatically
         )
         
         # PM-specific settings

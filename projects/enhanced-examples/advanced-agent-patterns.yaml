@@ -1,0 +1,266 @@
+# Enhanced Agent Patterns for AutoSquad
+# Based on analysis of prompts from well-funded AI companies
+
+enhanced_web_development_squad:
+  name: "Enhanced Full-Stack Web Development Team"
+  description: "Production-ready web application development with enterprise-grade patterns"
+  
+  agents:
+    - type: pm
+      name: "Product Strategy Lead"
+      enhanced_capabilities:
+        - requirements_decomposition
+        - user_story_generation
+        - acceptance_criteria_definition
+        - stakeholder_communication
+      prompt_enhancements:
+        - thorough_analysis
+        - production_ready
+        - collaboration
+      
+    - type: engineer
+      name: "Senior Full-Stack Engineer"
+      enhanced_capabilities:
+        - context_aware_implementation
+        - production_ready_coding
+        - dependency_management
+        - testing_integration
+      prompt_enhancements:
+        - thorough_analysis
+        - production_ready
+        - quality_standards
+      tools:
+        - file_operations
+        - package_management
+        - testing_framework
+        - database_operations
+        
+    - type: architect
+      name: "Technical Design Authority"
+      enhanced_capabilities:
+        - architectural_review
+        - design_pattern_guidance
+        - scalability_assessment
+        - security_review
+      prompt_enhancements:
+        - thorough_analysis
+        - quality_standards
+        - collaboration
+      
+    - type: qa
+      name: "Quality & UX Validator"
+      enhanced_capabilities:
+        - comprehensive_testing
+        - user_experience_validation
+        - edge_case_identification
+        - performance_testing
+      prompt_enhancements:
+        - thorough_analysis
+        - quality_standards
+        - production_ready
+
+  workflow:
+    rounds: 6
+    reflection_frequency: 2
+    quality_gates:
+      - requirements_validation
+      - architectural_review
+      - code_review
+      - comprehensive_testing
+      - performance_validation
+      - security_assessment
+    
+  enhanced_features:
+    context_management:
+      enabled: true
+      depth: "comprehensive"
+      pattern_recognition: true
+      
+    production_standards:
+      immediate_runnable: true
+      complete_dependencies: true
+      error_handling: "comprehensive"
+      documentation: "inline_and_external"
+      
+    collaboration_protocols:
+      handoff_validation: true
+      progress_tracking: true
+      conflict_resolution: true
+      knowledge_sharing: true
+
+enhanced_ai_ml_development_squad:
+  name: "AI/ML Development Specialists"
+  description: "Specialized team for AI/ML application development"
+  
+  agents:
+    - type: pm
+      name: "AI Product Manager"
+      specialization: "ai_ml_products"
+      enhanced_capabilities:
+        - ai_requirements_analysis
+        - model_performance_criteria
+        - data_requirements_definition
+        - ethical_ai_considerations
+        
+    - type: engineer
+      name: "ML Engineer"
+      specialization: "machine_learning"
+      enhanced_capabilities:
+        - model_implementation
+        - data_pipeline_development
+        - ml_ops_integration
+        - performance_optimization
+      tools:
+        - ml_frameworks
+        - data_processing
+        - model_evaluation
+        - deployment_tools
+        
+    - type: architect
+      name: "ML Systems Architect"
+      specialization: "ml_architecture"
+      enhanced_capabilities:
+        - ml_system_design
+        - scalability_planning
+        - model_governance
+        - infrastructure_design
+        
+    - type: qa
+      name: "ML Quality Engineer"
+      specialization: "ml_testing"
+      enhanced_capabilities:
+        - model_validation
+        - data_quality_testing
+        - bias_detection
+        - performance_benchmarking
+
+enhanced_api_development_squad:
+  name: "Enterprise API Development Team"
+  description: "Production-grade API and microservices development"
+  
+  agents:
+    - type: pm
+      name: "API Product Manager"
+      specialization: "api_products"
+      enhanced_capabilities:
+        - api_requirements_analysis
+        - developer_experience_design
+        - integration_planning
+        - documentation_strategy
+        
+    - type: engineer
+      name: "Backend API Engineer"
+      specialization: "api_development"
+      enhanced_capabilities:
+        - restful_api_design
+        - graphql_implementation
+        - authentication_systems
+        - rate_limiting
+        - caching_strategies
+      tools:
+        - api_frameworks
+        - database_design
+        - authentication_tools
+        - monitoring_integration
+        
+    - type: architect
+      name: "API Systems Architect"
+      specialization: "api_architecture"
+      enhanced_capabilities:
+        - microservices_design
+        - api_gateway_configuration
+        - security_architecture
+        - performance_optimization
+        
+    - type: qa
+      name: "API Quality Engineer"
+      specialization: "api_testing"
+      enhanced_capabilities:
+        - api_testing_automation
+        - load_testing
+        - security_testing
+        - contract_testing
+
+# Enhanced prompt patterns specific to different domains
+domain_specific_enhancements:
+  web_development:
+    context_patterns:
+      - "Understand existing component patterns and design systems"
+      - "Consider responsive design and accessibility requirements"
+      - "Analyze existing routing and state management patterns"
+      - "Review UI/UX consistency across the application"
+    
+    production_standards:
+      - "Implement proper SEO and meta tag management"
+      - "Add comprehensive error boundaries and error handling"
+      - "Include proper loading states and user feedback"
+      - "Optimize for performance and Core Web Vitals"
+    
+    collaboration_focus:
+      - "Coordinate frontend and backend development"
+      - "Ensure design system consistency"
+      - "Validate API contracts and data flows"
+      - "Test cross-browser compatibility"
+  
+  api_development:
+    context_patterns:
+      - "Understand existing API patterns and conventions"
+      - "Analyze authentication and authorization flows"
+      - "Review data models and database schemas"
+      - "Consider API versioning and backward compatibility"
+    
+    production_standards:
+      - "Implement comprehensive input validation"
+      - "Add proper error handling and status codes"
+      - "Include rate limiting and security measures"
+      - "Generate complete API documentation"
+    
+    collaboration_focus:
+      - "Coordinate with frontend teams on API contracts"
+      - "Validate data requirements with stakeholders"
+      - "Ensure database design supports requirements"
+      - "Test API integration and performance"
+
+  ai_ml_development:
+    context_patterns:
+      - "Understand data sources and quality requirements"
+      - "Analyze existing model performance and metrics"
+      - "Review data processing and feature engineering"
+      - "Consider model deployment and monitoring needs"
+    
+    production_standards:
+      - "Implement robust data validation and processing"
+      - "Add comprehensive model evaluation and testing"
+      - "Include proper error handling and fallback mechanisms"
+      - "Generate model documentation and metadata"
+    
+    collaboration_focus:
+      - "Coordinate data requirements with stakeholders"
+      - "Validate model performance with domain experts"
+      - "Ensure infrastructure supports model deployment"
+      - "Test model integration and monitoring"
+
+# Advanced tool configurations based on AI company patterns
+enhanced_tool_configurations:
+  file_operations:
+    safety_checks: true
+    backup_before_modify: true
+    pattern_validation: true
+    
+  code_generation:
+    include_complete_imports: true
+    add_error_handling: true
+    follow_existing_patterns: true
+    validate_syntax: true
+    
+  testing:
+    comprehensive_coverage: true
+    edge_case_testing: true
+    integration_testing: true
+    performance_testing: true
+    
+  documentation:
+    inline_comments: true
+    api_documentation: true
+    readme_generation: true
+    architecture_documentation: true 

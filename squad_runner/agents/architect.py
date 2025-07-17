@@ -19,53 +19,15 @@ class ArchitectAgent(BaseSquadAgent):
         agent_settings: Dict[str, Any],
         project_manager
     ):
-        # Define the system message template
-        system_message_template = """
-You are a Senior Software Architect responsible for code quality, system design, and technical leadership.
-
-CORE RESPONSIBILITIES:
-- Review code for quality, maintainability, and best practices
-- Design overall system architecture and module structure
-- Suggest refactoring opportunities and improvements
-- Ensure scalability and performance considerations
-- Maintain technical documentation and design decisions
-- Guide technology choices and patterns
-
-REVIEW FOCUS AREAS:
-- Code structure and organization
-- Design patterns and architectural principles
-- Performance and scalability implications
-- Security considerations
-- Maintainability and readability
-- Testing coverage and quality
-
-COMMUNICATION STYLE:
-- Provide constructive, specific feedback
-- Explain the reasoning behind architectural decisions
-- Suggest concrete improvements with examples
-- Balance ideal solutions with practical constraints
-- Acknowledge good work while identifying areas for improvement
-
-PROJECT CONTEXT:
-{project_prompt}
-
-CURRENT WORKSPACE: {workspace_path}
-AVAILABLE FILES: {current_files}
-
-Focus on helping the team build a robust, maintainable solution.
-"""
-        
-        # Get enhanced system message with project context
-        system_message = self.get_enhanced_system_message(system_message_template, project_context)
-        
-        # Initialize the base agent
+        # Initialize with enhanced prompts (no custom system_message)
+        # The base class will automatically use enhanced prompts based on agent type
         super().__init__(
-            name="Architect",
+            name="Technical Architect",
             model_client=model_client,
             project_context=project_context,
             agent_settings=agent_settings,
             project_manager=project_manager,
-            system_message=system_message
+            # No system_message parameter = use enhanced prompts automatically
         )
         
         # Architect-specific settings

@@ -1,34 +1,128 @@
-Build a professional B2B sales website for "DataSync Solutions" - a small business that helps companies integrate their CRM systems with third-party tools. The website should:
+# Enhanced B2B Sales Website - DataSync Solutions
+# Production-ready website using enterprise-grade patterns
+
+## Project Overview
+Build a comprehensive, production-ready B2B sales website for "DataSync Solutions" - a company specializing in CRM system integrations and business automation solutions.
 
 ## Core Requirements
-1. **Landing Page** with compelling value proposition and lead capture form
-2. **Services Page** detailing CRM integration, data migration, and automation services  
-3. **Case Studies Page** with 3-4 customer success stories and ROI metrics
-4. **About Page** with team bios and company story
-5. **Contact Page** with consultation booking calendar integration
-6. **Blog Section** with 5-10 SEO-optimized articles about CRM best practices
+
+**Primary Functions:**
+- Professional landing page with conversion-optimized value proposition
+- Comprehensive services showcase with detailed offerings
+- Customer success stories with quantifiable ROI metrics  
+- Team and company credibility establishment
+- Lead generation and consultation booking system
+- Educational content hub for SEO and thought leadership
+
+**Business Objectives:**
+- Convert 3-5% of website visitors into qualified leads
+- Position DataSync as the go-to CRM integration expert
+- Generate 20+ qualified leads per month through the website
+- Establish thought leadership in business automation space
 
 ## Technical Specifications
-- Modern, responsive design using React/Next.js or similar framework
-- Mobile-first responsive layout that works perfectly on all devices
-- Fast loading times (< 3 seconds) with optimized images and code
-- SEO-optimized with proper meta tags, structured data, and sitemap
-- Contact forms with email integration and lead nurturing sequences
-- Analytics integration (Google Analytics 4) with conversion tracking
-- GDPR-compliant cookie consent and privacy policy
 
-## Business Requirements  
-- Professional, trustworthy design that converts visitors into leads
-- Clear pricing tiers (Starter, Professional, Enterprise) with feature comparisons
-- Customer testimonials and social proof throughout the site
-- Lead magnets (free CRM audit checklist, integration guide PDF)
-- Conversion-optimized CTAs on every page
-- Integration with business email and CRM for lead management
+**Frontend Stack:**
+- Next.js 14 with TypeScript for type safety and performance
+- Tailwind CSS for responsive, mobile-first design
+- Framer Motion for smooth animations and transitions
+- React Hook Form for optimized form handling
+- Next.js Image component for optimized image delivery
 
-## Content Strategy
-- Target audience: Small to medium business owners struggling with disconnected systems
-- Focus on pain points: manual data entry, lost leads, incomplete customer views
-- Emphasize benefits: time savings, improved accuracy, better customer relationships
-- Include industry-specific examples (real estate, e-commerce, professional services)
+**Backend Integration:**
+- Next.js API routes for form processing and lead capture
+- HubSpot CRM API integration for lead management
+- SendGrid or similar for transactional emails
+- Calendly API for consultation booking integration
+- Google Analytics 4 with enhanced e-commerce tracking
 
-The website should position DataSync Solutions as the go-to expert for CRM integrations, with a focus on practical results and excellent customer service. 
+**Performance Requirements:**
+- Core Web Vitals: LCP < 2.5s, FID < 100ms, CLS < 0.1
+- Lighthouse Performance Score > 90
+- SEO Score > 95 with structured data implementation
+- Mobile responsiveness across all device sizes
+- Progressive Web App capabilities
+
+## Quality Standards
+
+**Production-Ready Requirements:**
+- Complete, immediately deployable application
+- Comprehensive error handling and fallback states
+- Input validation and sanitization for all forms
+- GDPR/CCPA compliant privacy controls
+- Accessibility compliance (WCAG 2.1 AA standards)
+- SEO optimization with meta tags, structured data, and sitemap
+
+**Security & Compliance:**
+- Content Security Policy (CSP) implementation
+- HTTPS enforcement with security headers
+- Form submission rate limiting and validation
+- Cookie consent management system
+- Privacy policy and terms of service integration
+
+## Expected Deliverables
+
+**Complete Application:**
+- Fully functional, production-ready website
+- All pages and features implemented and tested
+- Responsive design working across all devices
+- SEO-optimized content and technical implementation
+
+**Development Assets:**
+- Complete Next.js application with TypeScript
+- Tailwind CSS configuration and custom components
+- API integrations with error handling and rate limiting
+- Database schema and content management system
+- Deployment configuration for Vercel or similar platform
+
+**Content & Media:**
+- Professional copywriting for all pages
+- Optimized images and media assets
+- Blog content calendar and initial posts
+- Lead magnets (PDFs, checklists, guides)
+
+**Documentation:**
+- Complete setup and deployment instructions
+- Content management guide for non-technical users
+- Analytics and conversion tracking setup
+- Maintenance and update procedures
+
+## Testing & Quality Assurance
+
+**Functional Testing:**
+- All forms submit correctly and integrate with CRM
+- Contact booking system works end-to-end
+- Email automation triggers properly
+- Analytics tracking fires correctly
+
+**Performance Testing:**
+- Page load speed optimization and validation
+- Mobile responsiveness across devices
+- Cross-browser compatibility testing
+- SEO validation and structured data testing
+
+## Success Metrics
+
+**Primary KPIs:**
+- Website conversion rate (target: 3-5%)
+- Qualified leads generated per month (target: 20+)
+- Average session duration (target: 2+ minutes)
+- Page views per session (target: 3+)
+
+**Secondary Metrics:**
+- Organic search traffic growth
+- Blog engagement and social shares
+- Case study download rates
+- Consultation booking conversion rate
+
+## Context Management Instructions
+
+**For Development Team:**
+- Analyze existing DataSync marketing materials for brand consistency
+- Research competitor websites for industry best practices
+- Review CRM integration case studies for credible content
+- Understand target audience pain points for messaging alignment
+- Follow established design patterns for B2B websites
+- Ensure all integrations follow API best practices and error handling
+
+This enhanced project delivers a comprehensive, enterprise-grade B2B website that positions DataSync Solutions as the premier CRM integration specialist while generating qualified leads and establishing market credibility. 

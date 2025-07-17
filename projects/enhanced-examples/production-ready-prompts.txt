@@ -1,0 +1,222 @@
+# Production-Ready Project Prompts for AutoSquad
+# Enhanced with patterns from well-funded AI companies
+
+## Example 1: Enterprise Task Management Application
+
+Build a comprehensive task management web application with the following specifications:
+
+**Core Requirements:**
+- User authentication and role-based access control (Admin, Manager, Team Member)
+- Project creation and management with team assignment
+- Task creation, assignment, tracking, and status updates
+- Real-time notifications and activity feeds
+- File attachments and comments on tasks
+- Reporting dashboard with analytics and progress tracking
+- REST API with comprehensive documentation
+
+**Technical Specifications:**
+- Frontend: React with TypeScript, Tailwind CSS, and React Query
+- Backend: Node.js with Express and TypeScript
+- Database: PostgreSQL with Prisma ORM
+- Authentication: JWT with refresh tokens
+- Real-time features: WebSocket integration
+- File storage: AWS S3 or local file system
+- Testing: Jest for unit tests, Cypress for E2E testing
+- Documentation: Swagger/OpenAPI specification
+
+**Quality Requirements:**
+- Production-ready code with comprehensive error handling
+- Responsive design that works on desktop, tablet, and mobile
+- Accessibility compliance (WCAG 2.1 AA)
+- Performance optimization (Core Web Vitals compliance)
+- Security best practices (input validation, XSS protection, SQL injection prevention)
+- Complete setup instructions and deployment guide
+- Comprehensive API documentation
+
+**Expected Deliverables:**
+- Complete, immediately runnable application
+- Database schema and migrations
+- API endpoints with full CRUD operations
+- User interface with all specified features
+- Authentication and authorization system
+- Real-time notification system
+- Admin dashboard for user and project management
+- Comprehensive test suite
+- Documentation and deployment guide
+
+---
+
+## Example 2: AI-Powered Content Analysis Platform
+
+Create a machine learning platform for content analysis and insights with the following specifications:
+
+**Core Requirements:**
+- Content ingestion from multiple sources (text files, URLs, APIs)
+- Natural language processing for sentiment analysis, topic extraction, and entity recognition
+- Custom model training and evaluation capabilities
+- Interactive dashboard for visualizing insights and trends
+- API for programmatic access to analysis results
+- User management and workspace organization
+- Export capabilities for reports and data
+
+**Technical Specifications:**
+- Backend: Python with FastAPI and Pydantic
+- ML Framework: Transformers, scikit-learn, and pandas
+- Frontend: React with TypeScript and D3.js for visualizations
+- Database: PostgreSQL for metadata, Redis for caching
+- Model Storage: MLflow for model versioning and deployment
+- Queue System: Celery with Redis for background processing
+- Containerization: Docker and Docker Compose
+- Testing: pytest for backend, Jest for frontend
+
+**Quality Requirements:**
+- Scalable architecture supporting concurrent analysis jobs
+- Model performance monitoring and alerting
+- Data privacy and security compliance
+- Comprehensive error handling and graceful degradation
+- Real-time progress tracking for long-running analyses
+- Complete API documentation with examples
+- Model explainability and confidence scoring
+
+**Expected Deliverables:**
+- Complete ML pipeline from data ingestion to insights
+- Pre-trained models for common analysis tasks
+- Interactive web interface for non-technical users
+- Comprehensive API with authentication
+- Background job processing system
+- Model evaluation and monitoring dashboard
+- Data export and reporting features
+- Docker deployment configuration
+- Complete documentation and setup guide
+
+---
+
+## Example 3: E-commerce Microservices Platform
+
+Develop a scalable e-commerce platform using microservices architecture with the following specifications:
+
+**Core Requirements:**
+- User service: Registration, authentication, profile management
+- Product service: Catalog management, search, recommendations
+- Cart service: Shopping cart management with persistence
+- Order service: Order processing, payment integration, order tracking
+- Inventory service: Stock management, reservation, availability
+- Notification service: Email, SMS, and push notifications
+- API Gateway: Request routing, rate limiting, authentication
+- Admin dashboard: Platform management and analytics
+
+**Technical Specifications:**
+- Backend: Node.js with TypeScript for each microservice
+- Database: PostgreSQL for user/order data, Redis for caching/sessions
+- API Gateway: Express Gateway or Kong
+- Message Queue: RabbitMQ for inter-service communication
+- Payment Integration: Stripe API
+- Search Engine: Elasticsearch for product search
+- Containerization: Docker and Kubernetes
+- Monitoring: Prometheus and Grafana
+
+**Quality Requirements:**
+- Service isolation with independent deployment
+- Fault tolerance and circuit breaker patterns
+- Distributed logging and monitoring
+- API versioning and backward compatibility
+- Comprehensive security (OAuth2, API key management)
+- Performance optimization (caching, database indexing)
+- Automated testing (unit, integration, contract testing)
+- Complete infrastructure as code
+
+**Expected Deliverables:**
+- Complete microservices with well-defined APIs
+- Service discovery and inter-service communication
+- Authentication and authorization system
+- Payment processing integration
+- Product search and recommendation engine
+- Order management and tracking system
+- Admin dashboard for platform management
+- API documentation for all services
+- Kubernetes deployment manifests
+- Monitoring and logging configuration
+- Complete setup and deployment guide
+
+---
+
+## Example 4: Real-time Collaborative Document Editor
+
+Build a collaborative document editing platform similar to Google Docs with the following specifications:
+
+**Core Requirements:**
+- Real-time collaborative text editing with conflict resolution
+- Document management (create, share, organize, version history)
+- User presence awareness (who's editing, cursor positions)
+- Comments and suggestions system
+- Document sharing with permission levels (view, comment, edit)
+- Export to multiple formats (PDF, Word, HTML)
+- Offline editing with sync when reconnected
+- Rich text formatting and media embedding
+
+**Technical Specifications:**
+- Frontend: React with TypeScript and rich text editor (Slate.js or similar)
+- Backend: Node.js with Express and TypeScript
+- Real-time: WebSocket with Socket.io
+- Conflict Resolution: Operational Transform (OT) or CRDT
+- Database: PostgreSQL for metadata, Redis for real-time state
+- File Storage: AWS S3 for media and exports
+- Authentication: OAuth2 with multiple providers
+- Search: Elasticsearch for document content search
+
+**Quality Requirements:**
+- Sub-100ms latency for collaborative operations
+- Conflict-free collaborative editing
+- Reliable offline/online synchronization
+- Scalable real-time architecture
+- Data consistency and durability
+- Comprehensive security (document access control)
+- Performance optimization for large documents
+- Cross-browser compatibility
+
+**Expected Deliverables:**
+- Real-time collaborative editing engine
+- Complete document management system
+- User authentication and permission system
+- Rich text editor with formatting capabilities
+- Comments and suggestions functionality
+- Document sharing and collaboration features
+- Version history and document recovery
+- Export functionality to multiple formats
+- Offline editing capabilities
+- Comprehensive testing for collaborative features
+- Complete setup and deployment guide
+
+---
+
+## Enhanced Prompt Patterns to Use:
+
+1. **Comprehensive Specification Pattern:**
+   - Include all technical requirements upfront
+   - Specify exact technologies and frameworks
+   - Define quality and performance requirements
+   - List all expected deliverables
+
+2. **Production-Ready Emphasis:**
+   - Explicitly require "immediately runnable" code
+   - Demand comprehensive error handling
+   - Specify security and performance requirements
+   - Include testing and documentation requirements
+
+3. **Context-Aware Development:**
+   - Require understanding of existing patterns
+   - Emphasize following established conventions
+   - Include integration with existing systems
+   - Specify compatibility requirements
+
+4. **Quality Gates Pattern:**
+   - Define multiple validation checkpoints
+   - Include both functional and non-functional requirements
+   - Specify testing strategies and coverage
+   - Include performance and security validation
+
+5. **Collaboration Protocol:**
+   - Clear handoff requirements between agents
+   - Specified review and approval processes
+   - Documentation and knowledge sharing requirements
+   - Progress tracking and reporting expectations 
