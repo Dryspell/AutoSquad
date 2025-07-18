@@ -1,0 +1,313 @@
+# Enhanced AI Consultancy Marketing Platform - Flowfoundry
+# Production-ready website using enterprise-grade patterns
+
+## Project Overview
+Build a comprehensive, production-ready marketing and content platform for "Flowfoundry" - a cutting-edge AI consultancy specializing in multi-agent systems, operational optimization, and AI-accelerated business transformation for small to mid-sized businesses.
+
+## Core Requirements
+
+**Primary Functions:**
+- Professional marketing website with dynamic content management capabilities
+- Client acquisition funnel with advanced lead capture and qualification
+- Case study showcase platform with rich media and interactive elements
+- Team presentation system with dynamic bios and expertise highlighting
+- Content marketing hub with blog functionality and SEO optimization
+- Client onboarding and consultation booking system integration
+
+**Business Objectives:**
+- Generate 50+ qualified leads per month through organic and paid traffic
+- Establish Flowfoundry as the premier AI consultancy for SMB transformation
+- Achieve 5%+ conversion rate from visitor to consultation booking
+- Position as thought leaders in multi-agent AI systems and business automation
+- Create scalable content platform supporting 100+ case studies and articles
+
+## Technical Specifications
+
+**Frontend Architecture:**
+- **Next.js 15** with App Router for optimal performance and SEO
+- **TypeScript** throughout for type safety and developer experience
+- **Tailwind CSS** with custom design system and component library
+- **Framer Motion** for professional animations and micro-interactions
+- **shadcn/ui** components for consistent UI patterns and accessibility
+
+**Content Management System:**
+- **Sanity CMS** with custom schema architecture for flexible content
+- **GROQ queries** optimized for performance and complex data relationships
+- **Portable Text** for rich content editing with custom serializers
+- **Image optimization** with Sanity's CDN and Next.js Image component
+- **Real-time preview** capabilities for content creators
+
+**Performance Requirements:**
+- **Core Web Vitals**: LCP < 2.5s, FID < 100ms, CLS < 0.1
+- **Lighthouse Performance Score** > 95 across all pages
+- **SEO Score** > 95 with comprehensive meta tag implementation
+- **Mobile responsiveness** with perfect scores across all device sizes
+- **Loading performance** < 1.5s for critical above-the-fold content
+
+**Deployment & Infrastructure:**
+- **Vercel deployment** with automatic preview deployments for branches
+- **Custom domain configuration** with SSL and security headers
+- **CDN optimization** for global content delivery
+- **Analytics integration** with Google Analytics 4 and conversion tracking
+- **Error monitoring** with Sentry or similar service
+
+## Quality Standards
+
+**Production-Ready Requirements:**
+- Complete, immediately deployable application with zero configuration
+- Comprehensive error handling with graceful fallbacks and user feedback
+- Input validation and sanitization for all forms and user inputs
+- Accessibility compliance (WCAG 2.1 AA) with keyboard navigation support
+- Cross-browser compatibility testing across modern browsers and devices
+
+**Security & Compliance:**
+- **Content Security Policy (CSP)** implementation with strict directives
+- **HTTPS enforcement** with security headers (HSTS, X-Frame-Options)
+- **Form protection** with rate limiting, CAPTCHA, and spam prevention
+- **Data privacy compliance** with GDPR/CCPA cookie consent management
+- **API security** with input validation and secure Sanity token handling
+
+**SEO & Performance Optimization:**
+- **Structured data** implementation for rich snippets and search visibility
+- **Open Graph and Twitter Card** meta tags for social media sharing
+- **Sitemap generation** with automatic updates for new content
+- **Robot.txt optimization** for proper search engine crawling
+- **Image optimization** with WebP/AVIF formats and responsive images
+
+## Content Architecture & CMS Schema
+
+**Sanity Schema Design:**
+```typescript
+// Core content types for maximum flexibility
+siteSettings: {
+  title, description, logo, navigation, footer, contact, social
+}
+
+heroSection: {
+  title, subtitle, description, ctaButton, backgroundImage, metrics
+}
+
+teamMember: {
+  name, role, bio, image, expertise[], linkedIn, email, featured
+}
+
+caseStudy: {
+  title, client, industry, challenge, solution, results, 
+  technologies[], slug, coverImage, gallery[], testimonial
+}
+
+serviceArea: {
+  title, description, icon, benefits[], processSteps[], pricing
+}
+
+blogPost: {
+  title, excerpt, content, author, publishDate, tags[], 
+  coverImage, slug, seo, relatedPosts[]
+}
+```
+
+**Content Management Features:**
+- **Visual page builder** with reusable content blocks
+- **Draft and publish workflow** with content versioning
+- **Media library** with automatic optimization and tagging
+- **SEO optimization tools** built into content editing interface
+- **Content scheduling** and automated publishing capabilities
+
+## User Experience Design
+
+**Design System & Branding:**
+- **Professional, trustworthy aesthetic** suitable for enterprise clients
+- **Custom color palette** reflecting innovation and reliability
+- **Typography hierarchy** optimized for readability and brand consistency
+- **Iconography system** with custom icons for services and features
+- **Component library** with consistent spacing, shadows, and interactions
+
+**Conversion Optimization:**
+- **Strategic CTA placement** throughout the user journey
+- **Social proof integration** with client logos, testimonials, and metrics
+- **Progressive disclosure** of information to prevent cognitive overload
+- **Mobile-first design** ensuring optimal experience on all devices
+- **Loading states and animations** providing feedback during interactions
+
+**User Journey Mapping:**
+```
+Discovery → Engagement → Qualification → Conversion
+├── SEO-optimized landing → Service exploration → Case study review → Contact
+├── Social media → Content consumption → Newsletter signup → Lead nurturing
+└── Referral → Direct consultation → Proposal → Project kickoff
+```
+
+## Page Architecture & Functionality
+
+### **Homepage (`/`)**
+**Hero Section:**
+- Compelling value proposition with quantified benefits
+- Interactive demo or video showcasing AI solutions
+- Primary CTA leading to consultation booking
+- Trust indicators (client logos, certifications, metrics)
+
+**Services Overview:**
+- Dynamic grid of service areas with hover interactions
+- Process visualization (Discover → Prototype → Scale → Optimize)
+- ROI calculator or interactive assessment tool
+- Client success metrics and case study previews
+
+**Social Proof & Trust:**
+- Featured client testimonials with photos and metrics
+- Recent case study highlights with visual results
+- Team expertise showcase with certifications
+- Industry recognition and partnership badges
+
+### **About Page (`/about`)**
+**Team Showcase:**
+- Dynamic team member profiles with expertise filtering
+- Leadership bios with industry experience and achievements
+- Company mission, vision, and values presentation
+- Office culture and behind-the-scenes content
+
+**Company Story:**
+- Founding story and company evolution timeline
+- Core values demonstration through client work examples
+- Industry expertise and technology partnerships
+- Future vision and innovation roadmap
+
+### **Services Pages (`/services/[slug]`)**
+**Service Deep Dives:**
+- Detailed service descriptions with process breakdowns
+- Technology stack explanations and implementation examples
+- Pricing models and project timeline estimates
+- Related case studies and client testimonials
+
+### **Case Studies (`/case-studies/[slug]`)**
+**Project Showcases:**
+- Comprehensive project documentation with before/after metrics
+- Technology implementation details and architecture diagrams
+- Client testimonials and quantified business impact
+- Related services and similar project recommendations
+
+### **Contact & Conversion (`/contact`)**
+**Multi-Channel Contact:**
+- Intelligent contact form with project type pre-qualification
+- Calendly integration for consultation booking
+- Multiple contact methods (email, phone, LinkedIn)
+- Response time commitments and next-step expectations
+
+## Integration Requirements
+
+**CRM & Lead Management:**
+- **HubSpot CRM integration** for automatic lead creation and nurturing
+- **Email automation** for lead scoring and nurturing sequences
+- **Calendar integration** for consultation scheduling and follow-up
+- **Slack notifications** for immediate lead alerts to sales team
+
+**Analytics & Performance:**
+- **Google Analytics 4** with enhanced e-commerce and conversion tracking
+- **Hotjar or FullStory** for user behavior analysis and optimization
+- **Performance monitoring** with Core Web Vitals tracking
+- **A/B testing framework** for continuous conversion optimization
+
+**Content & Marketing:**
+- **Email newsletter integration** with Mailchimp or ConvertKit
+- **Social media sharing** with Open Graph optimization
+- **Content syndication** to relevant industry platforms
+- **SEO monitoring** with Google Search Console integration
+
+## Expected Deliverables
+
+**Complete Application:**
+- Fully functional, production-ready marketing website
+- Comprehensive Sanity CMS with all content types configured
+- Responsive design working flawlessly across all devices
+- SEO-optimized content and technical implementation
+
+**Development Assets:**
+- **Next.js 15 application** with TypeScript and optimized build configuration
+- **Tailwind CSS design system** with custom components and utilities
+- **Sanity Studio configuration** with custom schemas and validation
+- **Deployment configuration** for Vercel with environment management
+- **Component library** with Storybook documentation
+
+**Content & Media:**
+- **Professional copywriting** for all pages optimized for conversion
+- **High-quality images and graphics** with proper optimization
+- **Case study templates** with consistent formatting and structure
+- **Blog content strategy** with initial posts and content calendar
+
+**Documentation & Operations:**
+- **Complete setup and deployment guide** with step-by-step instructions
+- **Content management manual** for non-technical team members
+- **Performance optimization guide** with monitoring and maintenance procedures
+- **Security best practices** documentation and implementation checklist
+
+## Advanced Features & Integrations
+
+**AI-Powered Enhancements:**
+- **Intelligent content recommendations** based on user behavior
+- **Chatbot integration** for initial client qualification and support
+- **Personalized user experiences** based on industry and company size
+- **Automated content generation** for meta descriptions and social posts
+
+**Interactive Elements:**
+- **ROI calculator** for potential AI implementation savings
+- **Assessment tools** for operational bottleneck identification
+- **Interactive case study elements** with before/after comparisons
+- **Virtual consultation booking** with project scope pre-qualification
+
+## Testing & Quality Assurance
+
+**Functional Testing:**
+- **Cross-browser compatibility** testing across Chrome, Firefox, Safari, Edge
+- **Mobile responsiveness** validation across iOS and Android devices
+- **Form functionality** testing with various input scenarios and edge cases
+- **CMS integration** testing with content creation, editing, and publishing workflows
+
+**Performance Testing:**
+- **Load testing** to ensure performance under realistic traffic conditions
+- **Core Web Vitals optimization** with continuous monitoring and improvement
+- **SEO validation** with technical audit and search engine preview testing
+- **Accessibility testing** with screen readers and keyboard navigation
+
+**Security Testing:**
+- **Penetration testing** for contact forms and user input handling
+- **Content Security Policy** validation and XSS prevention
+- **Data protection compliance** with GDPR and privacy regulation requirements
+- **SSL/TLS configuration** and security header implementation validation
+
+## Success Metrics
+
+**Primary KPIs:**
+- **Website conversion rate** > 5% from visitor to qualified lead
+- **Consultation booking rate** > 15% from contact form submissions
+- **Average session duration** > 3 minutes indicating engagement
+- **Page views per session** > 4 showing content exploration
+
+**Business Impact Metrics:**
+- **Monthly qualified leads** > 50 through website channels
+- **Cost per lead** < $100 through organic and paid traffic
+- **Client acquisition cost** reduction by 30% through improved conversion
+- **Brand awareness metrics** through organic search ranking improvements
+
+**Technical Performance Metrics:**
+- **Core Web Vitals** scores consistently in "Good" range (green)
+- **SEO performance** with 50+ keywords ranking on first page
+- **Uptime** > 99.9% with automated monitoring and alerting
+- **Security score** A+ rating on security testing platforms
+
+## Context Management Instructions
+
+**For Development Team:**
+- **Research top AI consultancy websites** (Palantir, DataRobot, C3.ai) for industry best practices
+- **Analyze conversion optimization patterns** from high-performing B2B service websites
+- **Study modern design trends** in professional services and technology consulting
+- **Review accessibility guidelines** and implement comprehensive compliance measures
+- **Understand SMB decision-making processes** for AI technology adoption
+- **Follow Next.js and Sanity best practices** for scalable, maintainable architecture
+
+**Quality Assurance:**
+- **Test with real business scenarios** and typical client journey patterns
+- **Validate content management workflows** with non-technical users
+- **Verify performance optimization** under various network conditions and devices
+- **Test lead capture and CRM integration** with actual data flows
+- **Validate SEO implementation** with comprehensive technical audits
+
+This enhanced Flowfoundry marketing platform delivers an enterprise-grade web presence that positions the consultancy as the premier choice for AI-driven business transformation while providing the technical foundation for scalable growth and client acquisition. 
