@@ -22,7 +22,7 @@ class QAAgent(BaseSquadAgent):
         # Initialize with enhanced prompts (no custom system_message)
         # The base class will automatically use enhanced prompts based on agent type
         super().__init__(
-            name="Quality Assurance Engineer",
+            name="Quality_Assurance_Engineer",
             model_client=model_client,
             project_context=project_context,
             agent_settings=agent_settings,

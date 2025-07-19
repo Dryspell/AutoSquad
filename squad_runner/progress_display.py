@@ -163,12 +163,19 @@ class LiveProgressDisplay:
             return Panel("No agents registered", title="🤖 Agents", border_style="yellow")
             
         table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Agent", style="cyan", width=12)
-        table.add_column("Status", width=15)
-        table.add_column("Current Action", style="green")
-        table.add_column("Progress", justify="right", width=8)
+        table.add_column("Agent", style="cyan", min_width=15)  # Ensure minimum width
+        table.add_column("Status", width=12)
+        table.add_column("Current Action", style="green", min_width=20)
+        table.add_column("Progress", justify="right", width=12)
         
         for agent in self.agents.values():
+            # Shorten agent name for display
+            display_name = agent.agent_name
+            if len(display_name) > 20:
+                display_name = display_name.replace("_", " ").replace("Engineer", "Eng").replace("Manager", "Mgr")
+                if len(display_name) > 20:
+                    display_name = display_name[:17] + "..."
+            
             # Agent status
             if agent.is_active:
                 status = "[green]🟢 Active[/green]"
@@ -179,15 +186,22 @@ class LiveProgressDisplay:
                 else:
                     status = "[dim]⚪ Waiting[/dim]"
             
+            # Current action (truncate if too long)
+            action = agent.current_action
+            if len(action) > 30:
+                action = action[:27] + "..."
+            
             # Progress info
-            progress = f"{agent.actions_completed} tasks"
-            if agent.files_created + agent.files_modified > 0:
-                progress += f", {agent.files_created + agent.files_modified} files"
+            files_total = agent.files_created + agent.files_modified
+            if files_total > 0:
+                progress = f"{agent.actions_completed}a, {files_total}f"  # Abbreviated format
+            else:
+                progress = f"{agent.actions_completed} actions"
                 
             table.add_row(
-                f"{agent.agent_name}",
+                display_name,
                 status,
-                agent.current_action,
+                action,
                 progress
             )
             
@@ -210,13 +224,20 @@ class LiveProgressDisplay:
         
     def _render_footer(self) -> Panel:
         """Render the footer with token usage and performance info."""
-        # Token usage info
-        token_line = f"Token Usage: {self.token_info['used']:,} tokens | Est. Cost: ${self.token_info['estimated_cost']:.4f}"
+        # Token usage info with better formatting for small costs
+        cost = self.token_info['estimated_cost']
+        if cost < 0.001:
+            cost_str = f"${cost:.6f}"  # 6 decimal places for very small costs
+        else:
+            cost_str = f"${cost:.4f}"  # 4 decimal places for larger costs
+            
+        token_line = f"Token Usage: {self.token_info['used']:,} tokens | Est. Cost: {cost_str}"
         
         # Performance info
         active_agents = sum(1 for agent in self.agents.values() if agent.is_active)
         total_actions = sum(agent.actions_completed for agent in self.agents.values())
-        performance_line = f"Active Agents: {active_agents}/{len(self.agents)} | Total Actions: {total_actions}"
+        total_files = sum(agent.files_created + agent.files_modified for agent in self.agents.values())
+        performance_line = f"Active Agents: {active_agents}/{len(self.agents)} | Total Actions: {total_actions} | Files: {total_files}"
         
         # Instructions
         instructions = "[dim]Press Ctrl+C to stop | Logs saved to project/logs/[/dim]"
@@ -231,24 +252,41 @@ class LiveProgressDisplay:
         )
         
     async def start_live_display(self):
-        """Start the live display."""
+        """Start the live display."""        
         if self.is_running:
             return
             
         self.is_running = True
         layout = self._create_main_layout()
         
-        with Live(layout, console=self.console, refresh_per_second=2, screen=True) as live:
-            self.live_display = live
-            
-            while self.is_running:
-                # Update layout components
-                layout["header"].update(self._render_header())
-                layout["agents"].update(self._render_agents_panel())
-                layout["conversation"].update(self._render_conversation_panel())
-                layout["footer"].update(self._render_footer())
+        try:
+            # Use non-screen mode for better terminal compatibility
+            with Live(layout, console=self.console, refresh_per_second=2, screen=False, auto_refresh=False) as live:
+                self.live_display = live
                 
-                await asyncio.sleep(0.5)  # Update every 500ms
+                while self.is_running:
+                    try:
+                        # Update layout components
+                        layout["header"].update(self._render_header())
+                        layout["agents"].update(self._render_agents_panel())
+                        layout["conversation"].update(self._render_conversation_panel())
+                        layout["footer"].update(self._render_footer())
+                        
+                        # Manual refresh
+                        live.refresh()
+                        await asyncio.sleep(0.5)  # Update every 500ms
+                    except Exception as e:
+                        # Log error and continue
+                        print(f"Display error: {e}", flush=True)
+                        await asyncio.sleep(1.0)
+                        
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            print(f"Live display error: {e}", flush=True)
+        finally:
+            self.is_running = False
+            self.live_display = None
                 
     def stop_live_display(self):
         """Stop the live display."""

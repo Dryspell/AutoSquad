@@ -221,7 +221,7 @@ Discovery → Engagement → Qualification → Conversion
 - SEO-optimized content and technical implementation
 
 **Development Assets:**
-- **Next.js 15 application** with TypeScript and optimized build configuration
+- **Next.js 15 application (App Router)** with TypeScript and optimized build configuration
 - **Tailwind CSS design system** with custom components and utilities
 - **Sanity Studio configuration** with custom schemas and validation
 - **Deployment configuration** for Vercel with environment management

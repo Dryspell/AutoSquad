@@ -158,18 +158,48 @@ class TokenOptimizer:
     
     def get_usage_summary(self) -> Dict[str, Any]:
         """Get a summary of token usage and costs."""
-        # Rough cost estimates (update with current pricing)
-        input_cost_per_1k = 0.03  # GPT-4 input tokens
-        output_cost_per_1k = 0.06  # GPT-4 output tokens
+        # Updated pricing for different models (as of late 2024)
+        pricing = {
+            "gpt-4": {"input": 0.03, "output": 0.06},
+            "gpt-4-turbo": {"input": 0.01, "output": 0.03},
+            "gpt-4o": {"input": 0.005, "output": 0.015},
+            "gpt-4o-mini": {"input": 0.00015, "output": 0.0006},  # Very cheap!
+            "gpt-3.5-turbo": {"input": 0.0015, "output": 0.002}
+        }
         
-        estimated_cost = (self.total_tokens_used * input_cost_per_1k / 1000)  # Simplified
+        # Determine model pricing
+        model_key = self.model.lower()
+        if "gpt-4o-mini" in model_key:
+            rates = pricing["gpt-4o-mini"]
+        elif "gpt-4o" in model_key:
+            rates = pricing["gpt-4o"]
+        elif "gpt-4-turbo" in model_key:
+            rates = pricing["gpt-4-turbo"]
+        elif "gpt-4" in model_key:
+            rates = pricing["gpt-4"]
+        elif "gpt-3.5" in model_key:
+            rates = pricing["gpt-3.5-turbo"]
+        else:
+            # Default to GPT-4 pricing for unknown models
+            rates = pricing["gpt-4"]
+        
+        # Estimate cost (simplified - assumes 70% input, 30% output)
+        input_tokens = int(self.total_tokens_used * 0.7)
+        output_tokens = int(self.total_tokens_used * 0.3)
+        
+        estimated_cost = (
+            (input_tokens * rates["input"] / 1000) + 
+            (output_tokens * rates["output"] / 1000)
+        )
         
         return {
             "total_tokens_used": self.total_tokens_used,
             "api_calls_made": self.api_calls_made,
-            "estimated_cost_usd": round(estimated_cost, 4),
+            "estimated_cost_usd": round(estimated_cost, 6),  # More precision for cheap models
             "average_tokens_per_call": self.total_tokens_used // max(self.api_calls_made, 1),
-            "model": self.model
+            "model": self.model,
+            "input_cost_per_1k": rates["input"],
+            "output_cost_per_1k": rates["output"]
         }
     
     def should_compress_context(self, messages: List[Dict[str, Any]], system_message: str = "") -> bool:

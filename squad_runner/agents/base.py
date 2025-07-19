@@ -34,7 +34,7 @@ class BaseSquadAgent(AssistantAgent):
         self.project_manager = project_manager
         self.role_type = self.__class__.__name__.replace("Agent", "").lower()
         
-        # Initialize workspace tools
+        # Initialize workspace tools (will be updated with progress callback later)
         self.workspace_tools = create_workspace_tools(project_manager)
         
         # Create function tools for AutoGen
@@ -56,31 +56,37 @@ class BaseSquadAgent(AssistantAgent):
             system_message = f"You are a {self.role_type} agent in the AutoSquad development framework."
         
         # Initialize the AssistantAgent with enhanced system message and tools
+        # Using AutoGen 0.6.4 parameter names
         super().__init__(
             name=name,
             model_client=model_client,
             system_message=system_message,
-            tools=function_tools
+            tools=function_tools or []
         )
     
     def set_progress_callback(self, callback: Optional[Callable]):
         """Set the progress callback for tracking actions."""
         self.progress_callback = callback
+        # Update workspace tools with the callback
+        if hasattr(self.workspace_tools, 'progress_callback'):
+            self.workspace_tools.progress_callback = callback
+            if callback and hasattr(self, 'verbose') and getattr(self, 'verbose', False):
+                print(f"[DEBUG] Progress callback set for workspace tools of {getattr(self, 'name', 'agent')}")
     
     def _notify_action_started(self, action: str):
         """Notify that an action has started."""
         if self.progress_callback:
-            self.progress_callback("agent_action_started", self.name, action)
+            self.progress_callback("agent_action_started", action)
     
     def _notify_action_completed(self, result: str = ""):
         """Notify that an action has completed."""
         if self.progress_callback:
-            self.progress_callback("agent_action_completed", self.name, result)
+            self.progress_callback("agent_action_completed", result)
     
     def _notify_file_operation(self, operation: str, file_path: str):
         """Notify about a file operation."""
         if self.progress_callback:
-            self.progress_callback("file_operation", self.name, operation, file_path)
+            self.progress_callback("file_operation", operation, file_path)
     
     def _create_function_tools(self) -> List[FunctionTool]:
         """Create AutoGen function tools from workspace tools."""
@@ -94,41 +100,13 @@ class BaseSquadAgent(AssistantAgent):
             func_name = func_def["function"]["name"]
             
             if func_name in function_map:
-                # Create enhanced function that includes progress tracking
+                # Use the original function directly to avoid signature issues
                 original_func = function_map[func_name]
                 
-                def create_tracked_function(original, name):
-                    def tracked_function(*args, **kwargs):
-                        # Notify action started
-                        self._notify_action_started(f"Executing {name}")
-                        
-                        try:
-                            result = original(*args, **kwargs)
-                            
-                            # Track file operations
-                            if name == "write_file" and len(args) >= 1:
-                                self._notify_file_operation("create", args[0])
-                            elif name == "create_directory" and len(args) >= 1:
-                                self._notify_file_operation("mkdir", args[0])
-                            
-                            # Notify completion
-                            self._notify_action_completed(f"Completed {name}")
-                            return result
-                            
-                        except Exception as e:
-                            self._notify_action_completed(f"Failed {name}: {str(e)}")
-                            raise
-                    
-                    return tracked_function
-                
-                tracked_func = create_tracked_function(original_func, func_name)
-                
-                # Create AutoGen FunctionTool
+                # Create AutoGen function tool with original function
                 function_tool = FunctionTool(
-                    name=func_name,
-                    description=func_def["function"]["description"],
-                    parameters=func_def["function"]["parameters"],
-                    func=tracked_func
+                    func=original_func,
+                    description=func_def["function"]["description"]
                 )
                 
                 function_tools.append(function_tool)

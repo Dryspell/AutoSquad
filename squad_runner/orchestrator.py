@@ -29,7 +29,9 @@ class SquadOrchestrator:
         squad_profile: SquadProfile,
         model: str,
         verbose: bool = False,
-        show_live_progress: bool = True
+        show_live_progress: bool = True,
+        debug_mode: bool = False,
+        max_messages: Optional[int] = None
     ):
         self.project_manager = project_manager
         self.config = config
@@ -37,6 +39,8 @@ class SquadOrchestrator:
         self.model = model
         self.verbose = verbose
         self.show_live_progress = show_live_progress
+        self.debug_mode = debug_mode
+        self.max_messages = max_messages or (10 if debug_mode else None)
         
         # Initialize agents
         self.agents = []
@@ -59,6 +63,9 @@ class SquadOrchestrator:
         else:
             self.progress_display = None
             self.progress_callbacks = {}
+            
+        if self.debug_mode and self.verbose:
+            print(f"[DEBUG] SquadOrchestrator initialized with max_messages: {self.max_messages}")
     
     def _create_model_client(self):
         """Create the model client for agents."""
@@ -74,9 +81,15 @@ class SquadOrchestrator:
         """Create agents based on the squad profile."""
         project_context = self.project_manager.get_project_context()
         
+        if self.debug_mode and self.verbose:
+            print(f"[DEBUG] Creating {len(self.squad_profile.agents)} agents...")
+        
         for agent_config in self.squad_profile.agents:
             agent_type = agent_config["type"]
             agent_settings = agent_config.get("config", {})
+            
+            if self.debug_mode and self.verbose:
+                print(f"[DEBUG] Creating {agent_type} agent...")
             
             agent = await create_agent(
                 agent_type=agent_type,
@@ -86,11 +99,35 @@ class SquadOrchestrator:
                 project_manager=self.project_manager
             )
             
+            # Set up progress callbacks for the agent
+            if self.progress_display and hasattr(agent, 'set_progress_callback'):
+                def create_callback(agent_name):
+                    def callback(event_type, *args):
+                        if self.debug_mode and self.verbose:
+                            print(f"[DEBUG] Progress callback: {agent_name} -> {event_type}: {args}")
+                        
+                        if event_type == "agent_action_started":
+                            self.progress_display.agent_started_action(agent_name, args[0])
+                        elif event_type == "agent_action_completed":
+                            self.progress_display.agent_completed_action(agent_name, args[0] if args else "")
+                        elif event_type == "file_operation":
+                            if len(args) >= 2:
+                                self.progress_display.agent_file_operation(agent_name, args[0], args[1])
+                    return callback
+                
+                agent.set_progress_callback(create_callback(agent.name))
+                
+                if self.debug_mode and self.verbose:
+                    print(f"[DEBUG] Progress callback set for {agent.name}")
+            
             self.agents.append(agent)
             
             # Register agent with progress display
             if self.progress_display:
                 self.progress_display.register_agent(agent.name, agent_type)
+                
+                if self.debug_mode and self.verbose:
+                    print(f"[DEBUG] Agent {agent.name} registered with progress display")
             
             if self.verbose:
                 print(f"Created {agent_type} agent: {agent.name}")
@@ -108,6 +145,67 @@ class SquadOrchestrator:
         if self.verbose:
             print(f"Created group chat with {len(self.agents)} agents")
     
+    async def _run_monitored_group_chat(self, round_prompt: str, round_num: int):
+        """Run group chat with progress monitoring."""
+        if self.progress_display:
+            self.progress_display.agent_started_action("System", f"Starting agent collaboration")
+        
+        # Start a background task to provide periodic updates
+        monitor_task = None
+        if self.progress_display:
+            monitor_task = asyncio.create_task(self._monitor_chat_progress(round_num))
+        
+        try:
+            # Run the actual group chat
+            result = await self.group_chat.run(
+                task=round_prompt
+                # Note: v0.4 API parameters may be different
+            )
+            return result
+        finally:
+            # Stop monitoring
+            if monitor_task:
+                monitor_task.cancel()
+                try:
+                    await monitor_task
+                except asyncio.CancelledError:
+                    pass
+    
+    async def _monitor_chat_progress(self, round_num: int):
+        """Periodically update progress during chat execution."""
+        update_count = 0
+        while True:
+            await asyncio.sleep(10)  # Update every 10 seconds
+            update_count += 1
+            
+            if self.progress_display:
+                # In debug mode, simulate progressive token usage
+                if self.debug_mode:
+                    # Simulate gradual token accumulation
+                    simulated_tokens = update_count * 200  # 200 tokens per 10-second interval
+                    simulated_cost = simulated_tokens * 0.00015 / 1000  # GPT-4o-mini input rate
+                    
+                    self.progress_display.update_token_usage(
+                        self.token_optimizer.total_tokens_used + simulated_tokens,
+                        simulated_cost
+                    )
+                    
+                    if self.verbose:
+                        print(f"[DEBUG] Simulated token progress: +{simulated_tokens} tokens, ${simulated_cost:.6f}")
+                else:
+                    # Update with actual usage
+                    usage_summary = self.token_optimizer.get_usage_summary()
+                    self.progress_display.update_token_usage(
+                        usage_summary["total_tokens_used"],
+                        usage_summary["estimated_cost_usd"]
+                    )
+                
+                # Update status
+                self.progress_display.agent_started_action(
+                    "System", 
+                    f"Round {round_num} in progress... ({update_count * 10}s elapsed)"
+                )
+    
     async def run_round(self, round_num: int, reflect: bool = True):
         """Run a single development round."""
         if not self.group_chat:
@@ -115,7 +213,7 @@ class SquadOrchestrator:
         
         # Update progress display
         if self.progress_display:
-            self.progress_display.update_round_info(round_num, self.squad_profile.max_rounds or 5)
+            self.progress_display.update_round_info(round_num, self.squad_profile.rounds or 5)
         
         # Get project context for the round
         project_context = self.project_manager.get_project_context()
@@ -134,6 +232,27 @@ class SquadOrchestrator:
         # Start progress tracking for this round
         if self.progress_display:
             self.progress_display.agent_started_action("System", f"Starting Round {round_num}")
+            
+            # In debug mode, simulate some initial token usage
+            if self.debug_mode:
+                initial_tokens = 300  # Simulate initial prompt tokens
+                initial_cost = initial_tokens * 0.00015 / 1000  # GPT-4o-mini rate
+                self.token_optimizer.track_api_call(
+                    input_tokens=initial_tokens,
+                    output_tokens=0,
+                    cost_estimate=initial_cost
+                )
+                usage_summary = self.token_optimizer.get_usage_summary()
+                self.progress_display.update_token_usage(
+                    usage_summary["total_tokens_used"],
+                    usage_summary["estimated_cost_usd"]
+                )
+                if self.verbose:
+                    print(f"[DEBUG] Initial token simulation: {initial_tokens} tokens, ${initial_cost:.6f}")
+                    
+        elif self.verbose:
+            print(f"Starting round {round_num} with {len(self.agents)} agents...")
+            print(f"Project context: {len(project_context.get('current_files', []))} files in workspace")
         
         # Optimize conversation context before sending
         if self.conversation_history:
@@ -167,10 +286,7 @@ class SquadOrchestrator:
                     retry_delay *= 2  # Exponential backoff
                 
                 # Use AutoGen's group chat to run the conversation (v0.4 API)
-                result = await self.group_chat.run(
-                    task=round_prompt
-                    # Note: v0.4 API parameters may be different
-                )
+                result = await self._run_monitored_group_chat(round_prompt, round_num)
                 
                 # Process the conversation result
                 await self._process_round_result(round_num, result)
@@ -311,22 +427,51 @@ PROJECT OBJECTIVE:
 CURRENT WORKSPACE STATE:
 {workspace_summary}
 
-ROUND INSTRUCTIONS:
-This is round {round_num} of the development process. Each agent should:
+ROUND {round_num} MANDATORY REQUIREMENTS:
 
-1. **PM**: Review progress and guide next priorities
-2. **Engineer**: Implement features and write code  
-3. **Architect**: Review structure and suggest improvements
-4. **QA**: Test functionality and identify issues
+🏗️ **NEXT.JS 15 APP ROUTER STRUCTURE (REQUIRED):**
+- Use App Router NOT Pages Router
+- Create `app/` directory (NOT `src/pages/`)
+- Main page: `app/page.tsx` (NOT `pages/index.tsx`)
+- Layout: `app/layout.tsx` (NOT `pages/_app.tsx`)
+- API routes: `app/api/[route]/route.ts`
 
-COLLABORATION GUIDELINES:
-- Build upon previous work done in earlier rounds
-- Coordinate to avoid conflicts and duplicate work
-- Use function calls to actually modify workspace files
-- Communicate clearly about what you're working on
-- Focus on making measurable progress toward the project goal
+📋 **ESSENTIAL PROJECT FILES (CREATE FIRST):**
+1. **package.json** - Dependencies: next@15, react@18, typescript, tailwindcss, @types/node, @types/react
+2. **next.config.js** - Next.js configuration
+3. **tsconfig.json** - TypeScript configuration  
+4. **tailwind.config.js** - Tailwind CSS configuration
+5. **postcss.config.js** - PostCSS for Tailwind
 
-Let's collaborate to move this project forward!
+🎯 **AGENT SPECIFIC TASKS:**
+1. **PM**: Create project structure and essential config files
+2. **Engineer**: Build App Router pages and API routes with working TypeScript
+3. **Architect**: Design proper folder structure following Next.js 15 best practices  
+4. **QA**: Verify all files can actually run (`npm run dev` should work)
+
+⚠️ **CRITICAL REQUIREMENTS:**
+- NEVER use `src/pages/` structure - this is DEPRECATED
+- ALWAYS use `app/` directory for App Router
+- Include ALL dependencies in package.json
+- Create working, runnable Next.js 15 project
+- Use server components where possible
+- Implement proper TypeScript types
+
+📁 **CORRECT STRUCTURE EXAMPLE:**
+```
+package.json
+next.config.js
+tsconfig.json
+tailwind.config.js
+app/
+  ├── layout.tsx     (root layout)
+  ├── page.tsx       (homepage)
+  ├── globals.css    (global styles)
+  ├── components/    (reusable components)
+  └── api/           (API routes)
+```
+
+START WORKING NOW - CREATE PRODUCTION-READY NEXT.JS 15 APP ROUTER PROJECT!
 """
         
         # Add conversation summary if we have history
@@ -354,12 +499,38 @@ Let's collaborate to move this project forward!
                 # Update progress display with each message
                 if self.progress_display:
                     self.progress_display.agent_sent_message(message.source, message.content)
+                    
+                    # Check if this message indicates an action started/completed
+                    content_lower = message.content.lower()
+                    if any(keyword in content_lower for keyword in ['creating', 'implementing', 'building', 'writing']):
+                        self.progress_display.agent_started_action(message.source, "Working on implementation")
+                    elif any(keyword in content_lower for keyword in ['completed', 'finished', 'done', 'ready']):
+                        self.progress_display.agent_completed_action(message.source, "Task completed")
+                    
+                    # Check for file operations mentioned in messages
+                    if any(keyword in content_lower for keyword in ['created file', 'wrote file', 'saved file']):
+                        # Try to extract filename from message
+                        import re
+                        file_match = re.search(r'(?:created|wrote|saved)\s+(?:file\s+)?[`"]?([^\s`"]+)[`"]?', content_lower)
+                        if file_match:
+                            filename = file_match.group(1)
+                            self.progress_display.agent_file_operation(message.source, "create", filename)
         
         # Track token usage for this round
         round_tokens = sum(self.token_optimizer.count_message_tokens(msg) for msg in messages)
+        
+        # In debug mode, simulate more realistic token usage
+        if self.debug_mode:
+            # Simulate realistic token usage for the conversation
+            estimated_tokens = len(messages) * 150  # Rough estimate per message
+            round_tokens = max(round_tokens, estimated_tokens)
+            
+            if self.verbose:
+                print(f"[DEBUG] Simulated token usage: {round_tokens} tokens for {len(messages)} messages")
+        
         token_call_data = self.token_optimizer.track_api_call(
-            input_tokens=round_tokens,
-            output_tokens=round_tokens // 2,  # Rough estimate
+            input_tokens=int(round_tokens * 0.7),  # 70% input
+            output_tokens=int(round_tokens * 0.3),  # 30% output
             cost_estimate=None
         )
         
@@ -370,6 +541,9 @@ Let's collaborate to move this project forward!
                 usage_summary["total_tokens_used"],
                 usage_summary["estimated_cost_usd"]
             )
+            
+            if self.debug_mode and self.verbose:
+                print(f"[DEBUG] Updated progress display - Tokens: {usage_summary['total_tokens_used']}, Cost: ${usage_summary['estimated_cost_usd']:.6f}")
         
         # Save the conversation and workspace state
         await self.project_manager.save_round_state(round_num, messages)
@@ -379,7 +553,8 @@ Let's collaborate to move this project forward!
         
         if self.verbose:
             print(f"Round {round_num} completed. {len(messages)} messages exchanged. "
-                  f"Token usage: {token_call_data['total_tokens']} tokens")
+                  f"Token usage: {token_call_data['total_tokens']} tokens, "
+                  f"Estimated cost: ${usage_summary['estimated_cost_usd']:.6f}")
     
     async def _run_reflection(self, round_num: int):
         """Run a reflection phase to assess progress."""
@@ -409,10 +584,7 @@ Each agent should reflect on the work from their perspective and suggest improve
         
         try:
             # Run reflection conversation
-            reflection_result = await self.group_chat.run(
-                task=reflection_prompt,
-                cancellation_token=CancellationToken()
-            )
+            reflection_result = await self._run_monitored_group_chat(reflection_prompt, round_num)
             
             # Log reflection results
             reflection_messages = []
@@ -483,6 +655,44 @@ Each agent should reflect on the work from their perspective and suggest improve
         
         if self.verbose:
             print("Squad orchestrator cleanup completed")
+
+    async def test_progress_system(self):
+        """Test the progress tracking system without making API calls."""
+        if not self.progress_display:
+            print("[DEBUG] No progress display available for testing")
+            return
+            
+        print("[DEBUG] Testing progress system...")
+        
+        # Ensure agents are created
+        if not self.agents:
+            await self._create_agents()
+        
+        # Test progress updates for each agent
+        for i, agent in enumerate(self.agents):
+            agent_name = agent.name
+            
+            print(f"[DEBUG] Testing progress for {agent_name}")
+            
+            # Test action started
+            if self.progress_display:
+                self.progress_display.agent_started_action(agent_name, f"Test action {i+1}")
+                await asyncio.sleep(1)
+                
+                # Test file operation
+                self.progress_display.agent_file_operation(agent_name, "create", f"test-file-{i+1}.txt")
+                await asyncio.sleep(1)
+                
+                # Test action completed
+                self.progress_display.agent_completed_action(agent_name, f"Test completed {i+1}")
+                await asyncio.sleep(1)
+        
+        # Test token updates
+        if self.progress_display:
+            self.progress_display.update_token_usage(1500, 0.025)
+            
+        print("[DEBUG] Progress system test completed")
+        await asyncio.sleep(3)  # Let the display show updates
 
 
 # Utility function for creating orchestrators

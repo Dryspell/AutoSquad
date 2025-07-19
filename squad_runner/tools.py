@@ -10,8 +10,9 @@ import json
 class WorkspaceTools:
     """Function calling tools for workspace file operations."""
     
-    def __init__(self, project_manager):
+    def __init__(self, project_manager, progress_callback=None):
         self.project_manager = project_manager
+        self.progress_callback = progress_callback
         
     def get_function_definitions(self) -> List[Dict[str, Any]]:
         """Get OpenAI function definitions for workspace tools."""
@@ -101,6 +102,11 @@ class WorkspaceTools:
     def _write_file(self, file_path: str, content: str, description: str = "") -> str:
         """Implementation for write_file function."""
         try:
+            # Notify progress callback if available
+            if self.progress_callback:
+                self.progress_callback("agent_action_started", f"Writing file {file_path}")
+                self.progress_callback("file_operation", "create", file_path)
+            
             # Write the file
             self.project_manager.workspace.write_file(file_path, content)
             
@@ -115,9 +121,15 @@ class WorkspaceTools:
                 }
             )
             
+            # Notify completion
+            if self.progress_callback:
+                self.progress_callback("agent_action_completed", f"Created {file_path}")
+            
             return f"✅ Successfully created/updated file: {file_path}"
             
         except Exception as e:
+            if self.progress_callback:
+                self.progress_callback("agent_action_completed", f"Failed to write {file_path}: {str(e)}")
             error_msg = f"❌ Error writing file {file_path}: {str(e)}"
             return error_msg
     
@@ -146,6 +158,11 @@ class WorkspaceTools:
     def _create_directory(self, dir_path: str) -> str:
         """Implementation for create_directory function."""
         try:
+            # Notify progress callback if available
+            if self.progress_callback:
+                self.progress_callback("agent_action_started", f"Creating directory {dir_path}")
+                self.progress_callback("file_operation", "mkdir", dir_path)
+            
             self.project_manager.workspace.create_directory(dir_path)
             
             # Log the action
@@ -155,11 +172,17 @@ class WorkspaceTools:
                 details={"dir_path": dir_path}
             )
             
+            # Notify completion
+            if self.progress_callback:
+                self.progress_callback("agent_action_completed", f"Created directory {dir_path}")
+            
             return f"✅ Successfully created directory: {dir_path}"
         except Exception as e:
+            if self.progress_callback:
+                self.progress_callback("agent_action_completed", f"Failed to create {dir_path}: {str(e)}")
             return f"❌ Error creating directory {dir_path}: {str(e)}"
 
 
-def create_workspace_tools(project_manager) -> WorkspaceTools:
+def create_workspace_tools(project_manager, progress_callback=None) -> WorkspaceTools:
     """Factory function to create workspace tools."""
-    return WorkspaceTools(project_manager) 
+    return WorkspaceTools(project_manager, progress_callback) 
